@@ -29,7 +29,7 @@
     <?php
       try
       {
-        $db = new PDO('mysql:localhost=db;dbname=group25;charset=utf8', 'group25', '3uCTA8L2ID');
+        $db = new PDO('mysql:localhost=db;dbname=group25;charset=utf8', 'root', 'root');
       }
       catch (Exception $e)
       {
