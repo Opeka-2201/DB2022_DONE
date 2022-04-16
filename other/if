@@ -1,0 +1,12 @@
+<?php if(isset($_SESSION) && array_key_exists('loggedUser', $_SESSION) && $_SESSION['loggedUser']): ?>
+<?php else: ?>
+<?php endif; ?>
+
+<div class="d-flex justify-content-center">
+      <?php $sqlQuery = $db->prepare('SELECT * FROM Employe');
+            $sqlQuery->execute();
+            $emps = $sqlQuery->fetchAll();
+            foreach ($emps as $emp) {
+              echo ($emp["NOM"] . "</br>");
+            }?>
+      </div>
