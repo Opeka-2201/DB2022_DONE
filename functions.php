@@ -29,17 +29,19 @@ function sqlQuery($query, $db){
 //SELECT * FROM Projet WHERE CHEF=8105 AND NOM LIKE '%MED%'
 
 function filterData($args_get,$db){
-    $query = 'SELECT * FROM ' . $args_get["table"] . ' WHERE ';
+    $query = 'SELECT * FROM ' . $args_get["table"] . ' WHERE '; 
     foreach($args_get as $arg_name => $arg):
         if($arg == '' || $arg_name =='table'):
             continue;
         endif;
-        if(gettype($arg) == 'int'):
+        $type = sqlQuery("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema = 'group25' AND table_name = '". $args_get["table"] . "' AND COLUMN_NAME ='" . $arg_name ."'",$db);
+        if($type[0][0] == 'int'):
             $query = $query . $arg_name . "=" . $arg . ' ';
+        elseif($type[0][0] == 'date'):
+             $query = $query . $arg_name . " LIKE '" . $arg . "' ";
         else:
             $query = $query . $arg_name . " LIKE '%" . $arg . "%' ";
         endif;
-        // le cas date
             $query = $query . 'AND ';
     endforeach;
         $query = $query . '1';
