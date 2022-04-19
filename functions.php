@@ -1,6 +1,6 @@
 <?php
 
-function printTable($tuples,$columns){
+function printTable($tuples, $columns){
     echo("<table>");
     echo("<tr>");
     foreach($columns as $column):
