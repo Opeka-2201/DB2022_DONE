@@ -20,11 +20,6 @@
         die('Erreur!');
       }
     ?>
-
-
-
-
-    <?php include('footer.php'); ?>
   </body>
 
 </html>

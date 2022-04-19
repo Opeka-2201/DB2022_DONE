@@ -38,6 +38,7 @@
         die('Erreur!');
       } 
     ?>
+    <div class="px-4 py-5 my-5">
       <div class="d-flex justify-content-center">
         <p>Choisissez une table : </p>
         <form action ='search.php' method = 'GET'>
@@ -69,10 +70,13 @@
             <?php endforeach;?>
         <button type="submit">Filtrer</button>
         </form>
-        <?php
-              printTable(filterData($_GET,$db),$columns);
-              endif;
-        ?>
+        <div class="table-search">
+          <?php
+                printTable(filterData($_GET,$db),$columns);
+                endif;
+          ?>
+        </div>
       </div>
+    </div>
   </body>
 </html>

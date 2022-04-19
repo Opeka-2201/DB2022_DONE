@@ -61,16 +61,21 @@
         <button type="submit">Accéder</button>
         </form>
       </div>
-      <div class="justify-content-center">
+      <div class="justify-content-center text-center">
         <?php if(isset($_GET["projet"]) && ($_GET["projet"] != "NULL")):
                 $projet = sqlQuery('SELECT * FROM Projet WHERE NOM="' . $_GET["projet"] . '"', $db);
                 $tasks = sqlQuery('SELECT * FROM Tache WHERE PROJET="' . $_GET["projet"] . '"', $db);
                 
                 $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Tache' ORDER BY ORDINAL_POSITION", $db);
+
+                printTable($tasks,$columns);
+              // SELECT Tache.EMPLOYE, Employe.NOM FROM Tache INNER JOIN Employe ON Tache.EMPLOYE = Employe.NO;
+              // SELECT Employe.NOM, Fonction.TAUX_HORAIRE FROM Fonction INNER JOIN Employe ON FONCTION.NOM = Employe.NOM_FONCTION;
+
+              // SELECT Employe.NO, Employe.NOM, Fonction.TAUX_HORAIRE FROM Fonction INNER JOIN Employe ON FONCTION.NOM = Employe.NOM_FONCTION;
               endif;
         ?>
       </div>
-    <?php include('footer.php'); ?>
   </body>
 
 </html>
