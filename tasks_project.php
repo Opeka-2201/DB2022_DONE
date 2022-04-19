@@ -63,7 +63,7 @@
         </form>
       </div>
 
-      <form action ='tasks_project.php' methode = 'GET'>
+      <form action ='tasks_project.php' method = 'GET'>
           <input name="projet" value="NULL" type ="hidden">
           <label for="project_id">Project ID : </label>
           <input type="text" id="project_id" name="project_id">

@@ -47,14 +47,12 @@
         <form action ='/add.php' method = 'GET'>
           <select name="table" id="table-select">
               <option value="NULL">---</option>
-              <?php
-                  $tables = sqlQuery('SHOW TABLES',$db);
-                  foreach ($tables as $table) : 
-              ?>
-                  <option name ="table" value="<?php echo($table["Tables_in_group25"])?>"><?php echo($table["Tables_in_group25"])?> </option>
-              <?php endforeach;?>
+              <option value="Projet">Projet</option>
+              <option value="Fonction">Fonction</option>
+              <option value="Employe">Employe</option>
           </select>
-        <button type="submit">Accéder</button>
+          
+          <button type="submit">Accéder</button>
         </form>
       </div>
 
@@ -69,46 +67,73 @@
        
           <?php
             foreach($columns as $column):
-          ?>       
+              if($_GET["table"] == "Projet" && $column[0] == 'CHEF'):
+                $chefs = sqlQuery('SELECT NOM FROM Employe',$db);
+                echo("CHEF ");
+                echo("<select name='CHEF'>");
+                foreach ($chefs as $chef):
+                  $id = sqlQuery('SELECT NO FROM Employe WHERE NOM="' . $chef[0] .'"', $db);
+                  echo("<option value='" . $id[0] . "'>" . $chef[0] . "</option>");
+                endforeach;
+                echo("</select>");
+                
+              elseif($_GET["table"] == "Employe" && $column[0] == "NOM_DEPARTEMENT"):
+                $departements = sqlQuery('SELECT NOM FROM Departement', $db);
+                echo("NOM_DEPARTEMENT ");
+                echo("<select name='NOM_DEPARTEMENT'>");
+                foreach ($departements as $departement):
+                echo("<option value='" . $departement[0] . "'>" . $departement[0] . "</option>");
+                endforeach;
+                echo("</select>");
+              
+              elseif($_GET["table"] == "Employe" && $column[0] == "NOM_FONCTION"):
+                $fonctions = sqlQuery('SELECT NOM FROM Fonction', $db);
+                echo("NOM_FONCTION ");
+                echo("<select name='NOM_FONCTION'>");
+                foreach ($fonctions as $fonction):
+                echo("<option value='" . $fonction[0] . "'>" . $fonction[0] . "</option>");
+                endforeach;
+                echo("</select>");
 
+              else:
+          ?>
           <label for="<?php echo($column[0]);?>"><?php echo($column[0]);?></label>
           <input type="text" id="<?php echo($column[0]);?>" name="<?php echo($column[0]);?>">
-          <br><br>
-          <?php endforeach;?>
+          <?php 
+              endif;
+              echo("<br><br>");
+              endforeach;?>
 
           <button type="submit">Ajouter</button>
-        </form>
-        
-        <div class="table-search">
-          <?php
-                printTable($tuples,$columns);
 
-                  if(isset($_GET["added"]) && isset($_GET["table"])):
-                    $query = "INSERT INTO " . $_GET["table"] . " (";
-                    foreach($_GET as $key => $value):
-                      if($key == "table" || $key == "added"):
-                        continue;
-                      endif;
-                      $query = $query . $key .',';
-                    endforeach;
-                    $query = substr_replace($query,"", -1);
-                    $query = $query . ') VALUES (';
-                    
-                    foreach($_GET as $key => $value):
-                      if($key == "table" || $key == "added"):
-                        continue;
-                      endif;
-                      $query = $query . "'" .  $value . "'" . ',';
-                    endforeach;
-                    $query = substr_replace($query,"", -1);
-                    $query = $query . ');';
-                    sqlQuery($query, $db);
-                    
-
-                  endif;
+          <?php 
+            if(isset($_GET["added"]) && isset($_GET["table"])):
+              $query = "INSERT INTO " . $_GET["table"] . " (";
+              foreach($_GET as $key => $value):
+                if($key == "table" || $key == "added"):
+                  continue;
                 endif;
-          ?>
-        </div>
+                $query = $query . $key .',';
+              endforeach;
+              $query = substr_replace($query,"", -1);
+              $query = $query . ') VALUES (';
+              
+              foreach($_GET as $key => $value):
+                if($key == "table" || $key == "added"):
+                  continue;
+                endif;
+                $query = $query . "'" .  $value . "'" . ',';
+              endforeach;
+              $query = substr_replace($query,"", -1);
+              $query = $query . ');';
+              sqlQuery($query, $db);
+            endif;
+            
+            $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
+            $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
+            printTable($tuples,$columns); 
+            endif;?>
+        </form>
       </div>
     </div>
   </body>
