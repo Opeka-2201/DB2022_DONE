@@ -73,7 +73,7 @@
                 echo("<select name='CHEF'>");
                 foreach ($chefs as $chef):
                   $id = sqlQuery('SELECT NO FROM Employe WHERE NOM="' . $chef[0] .'"', $db);
-                  echo("<option value='" . $id[0] . "'>" . $chef[0] . "</option>");
+                  echo("<option value=" . $id[0][0] . ">" . $chef[0] . "</option>");
                 endforeach;
                 echo("</select>");
                 
@@ -121,6 +121,9 @@
               foreach($_GET as $key => $value):
                 if($key == "table" || $key == "added"):
                   continue;
+                elseif(strpos(" " . $key, 'DATE') != false):
+                  $query = $query . "str_to_date('" . $value . "', '%Y-%m-%d'),";
+                  continue;
                 endif;
                 $query = $query . "'" .  $value . "'" . ',';
               endforeach;
@@ -128,7 +131,6 @@
               $query = $query . ');';
               sqlQuery($query, $db);
             endif;
-            
             $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
             $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
             printTable($tuples,$columns); 
