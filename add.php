@@ -61,6 +61,7 @@
                 $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
                 $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
         ?>
+        <p>Ajout d'un élément dans la table <?php echo($_GET["table"]);?> :</p>
         <form action='add.php' method = 'GET'>
           <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
           <input name="added" value="TRUE" type ="hidden">
@@ -114,44 +115,44 @@
               endforeach;?>
 
           <button type="submit">Ajouter</button>
-
-          <?php 
-            if(isset($_GET["added"]) && isset($_GET["table"])):
-              $query = "INSERT INTO " . $_GET["table"] . " (";
-              foreach($_GET as $key => $value):
-                if($key == "table" || $key == "added"):
-                  continue;
-                endif;
-                $query = $query . $key .',';
-              endforeach;
-              $query = substr_replace($query,"", -1);
-              $query = $query . ') VALUES (';
-              
-              foreach($_GET as $key => $value):
-                if($key == "table" || $key == "added"):
-                  continue;
-                elseif($value == 'NULL' || $value == ''):
-                  $query = $query .' NULL,';
-                  continue;
-                elseif(strpos(" " . $key, 'DATE') != false):
-                  $query = $query . "str_to_date('" . $value . "', '%Y-%m-%d'),";
-                  continue;
-                else:
-                $query = $query . "'" .  $value . "'" . ',';
-                endif;
-              endforeach;
-              $query = substr_replace($query,"", -1);
-              $query = $query . ');';
-              sqlQuery($query, $db);
-            
-            elseif(isset($_GET["edit"]) && isset($_GET["table"])):
-              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_GET["departement"] . "', NOM_FONCTION='" . $_GET["fonction"] . "' WHERE NO=" . $_GET["employe_id"],$db);
-            endif;
-            $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
-            $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
-            printTable($tuples,$columns); 
-            endif;?>
         </form>
+        <br>
+        <?php 
+          if(isset($_GET["added"]) && isset($_GET["table"])):
+            $query = "INSERT INTO " . $_GET["table"] . " (";
+            foreach($_GET as $key => $value):
+              if($key == "table" || $key == "added"):
+                continue;
+              endif;
+              $query = $query . $key .',';
+            endforeach;
+            $query = substr_replace($query,"", -1);
+            $query = $query . ') VALUES (';
+            
+            foreach($_GET as $key => $value):
+              if($key == "table" || $key == "added"):
+                continue;
+              elseif($value == 'NULL' || $value == ''):
+                $query = $query .' NULL,';
+                continue;
+              elseif(strpos(" " . $key, 'DATE') != false):
+                $query = $query . "str_to_date('" . $value . "', '%Y-%m-%d'),";
+                continue;
+              else:
+              $query = $query . "'" .  $value . "'" . ',';
+              endif;
+            endforeach;
+            $query = substr_replace($query,"", -1);
+            $query = $query . ');';
+            sqlQuery($query, $db);
+          
+          elseif(isset($_GET["edit"]) && isset($_GET["table"])):
+            sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_GET["departement"] . "', NOM_FONCTION='" . $_GET["fonction"] . "' WHERE NO=" . $_GET["employe_id"],$db);
+          endif;
+          $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
+          $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
+          printTable($tuples,$columns); 
+          endif;?>
       </div>
       
       <?php
@@ -161,7 +162,8 @@
           $fonctions = sqlQuery('SELECT NOM FROM Fonction',$db);
       ?>
         <div class="justify-content-center">
-          <br><br>
+          <br>
+          <p>Modification des attributs d'un employé :</p>
           <form action='add.php' method='GET'>
             <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
             <input name="edit" value="TRUE" type="hidden">

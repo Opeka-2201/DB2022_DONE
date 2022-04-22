@@ -96,6 +96,10 @@
           if(isset($_GET["projet"]) && $_GET["projet"] == 'NULL'):
 
           elseif(isset($_GET["projet"]) && $_GET["projet"] != 'NULL'):
+            ?>
+            <br>
+            <p>Détails concernant le projet <?php echo($_GET["projet"]);?> :</p>
+            <?php
             $date_fin = sqlQuery('SELECT DATE_FIN FROM Projet WHERE Projet.NOM = "' . $_GET["projet"] . '"', $db);
             if(isset($date_fin[0]) && $date_fin[0][0] != NULL):
               $project_details = sqlQuery('SELECT * FROM Projet WHERE Projet.NOM = "' . $_GET["projet"] . '"',$db);
