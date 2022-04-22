@@ -51,10 +51,6 @@ function sqlQuery($query, $db){
     return $statement->fetchAll();
 }
 
-//SELECT * FROM Projet WHERE NOM LIKE '%MED%'
-//SELECT * FROM Projet WHERE CHEF=8105
-//SELECT * FROM Projet WHERE CHEF=8105 AND NOM LIKE '%MED%'
-
 function filterData($args_get,$db){
     $query = 'SELECT * FROM ' . $args_get["table"] . ' WHERE '; 
     foreach($args_get as $arg_name => $arg):
@@ -73,27 +69,5 @@ function filterData($args_get,$db){
     endforeach;
         $query = $query . '1';
         return sqlQuery($query,$db);
-}
-
-function cmpTable($t1,$t2){
-  //checks if all values of t1 are in t2
-  foreach($t1 as $v1):
-    $val1 = $v1[0];
-    $isValOk = false;
-    foreach($t2 as $v2):
-      $val2 = $v2[0];
-      if($val1 == $val2):
-        $isValOk = true;
-        break;
-      else:
-        continue;
-      endif;
-    endforeach;
-
-    if(!$isValOk):
-      return false;
-    endif;
-  endforeach;
-  return true;
 }
 ?>

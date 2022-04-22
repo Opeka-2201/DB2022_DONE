@@ -62,7 +62,7 @@
           if(isset($_GET["projet"]) && $_GET["projet"] != 'NULL' && isset($_GET["task_id"]) && isset($_GET["task_hours"]) && $_GET["task_id"] != 'NULL' && $_GET["task_hours"] != ''):
             $old_hours = sqlQuery('SELECT NB_HEURES FROM Tache WHERE ID="' . $_GET["task_id"] . '"',$db);
             $new_hours = $old_hours[0][0] + intval($_GET["task_hours"]);
-            if($new_hours >= $old_hours):
+            if($new_hours >= $old_hours[0][0]):
               sqlQuery('UPDATE Tache SET NB_HEURES=' . $new_hours . ' WHERE ID=' . $_GET["task_id"],$db);
             else:
             ?>
@@ -91,6 +91,12 @@
             endforeach;
             $end_date = sqlQuery('SELECT DATE(NOW())',$db);
             sqlQuery('UPDATE Projet SET COUT=' . $total_cost . ', DATE_FIN="' . $end_date[0][0]  .'", AVIS_EXPERT="' . $_GET["avis_expert"]  .'" WHERE NOM="' . $_GET["projet"] . '"', $db);
+          elseif(isset($_GET["projet"]) && $_GET["projet"] != 'NULL' && isset($_GET["edit_opinion"])):
+            if($_GET["edit_opinion"] == 'NULL'):
+              sqlQuery('UPDATE Projet SET AVIS_EXPERT=' . $_GET["edit_opinion"] . ' WHERE NOM="' . $_GET["projet"] .'"' ,$db);
+            else:
+              sqlQuery('UPDATE Projet SET AVIS_EXPERT="' . $_GET["edit_opinion"] . '" WHERE NOM="' . $_GET["projet"] .'"' ,$db);
+            endif;
           endif;
 
           if(isset($_GET["projet"]) && $_GET["projet"] == 'NULL'):
@@ -110,6 +116,23 @@
               $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_GET["projet"] . "'", $db);
               $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
               printTable($tasks, $columns);
+
+              ?>
+              <br>
+              <p>Modification de l'avis de l'expert pour le projet <?php echo($_GET["projet"]);?> :</p>
+
+              <form action='tasks_management.php' method='GET'>
+                <input name="projet" value="<?php echo($_GET["projet"]);?>" type ="hidden">
+                <?php echo("Avis de l'expert :"); ?>
+                <select name='edit_opinion'>
+                  <option value=NULL>---</option>
+                  <option value='SUCCÈS'>SUCCÈS</option>
+                  <option value='ÉCHEC'>ÉCHEC</option>
+                </select>
+                <br><br>
+                <button type='submit'>Modifier l'avis d'expert</button>
+              </form>
+              <?php
 
             else:
               $project_details = sqlQuery('SELECT * FROM Projet WHERE Projet.NOM = "' . $_GET["projet"] . '"',$db);

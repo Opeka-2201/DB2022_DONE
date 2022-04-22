@@ -85,6 +85,15 @@
                   echo("<option value=" . $departement[0] . ">" . $departement[0] . "</option>");
                 endforeach;
                 echo("</select>");
+              elseif($_GET["table"] == "Projet" && $column[0] == 'AVIS_EXPERT'):
+                echo('AVIS_EXPERT :')
+              ?>
+                <select name="AVIS_EXPERT">
+                  <option value=NULL>---</option>
+                  <option value='SUCCÈS'>SUCCÈS</option>
+                  <option value='ÉCHEC'>ÉCHEC</option>
+                </select>
+              <?php
               elseif($_GET["table"] == "Employe" && $column[0] == "NOM_DEPARTEMENT"):
                 $departements = sqlQuery('SELECT NOM FROM Departement', $db);
                 echo("NOM_DEPARTEMENT ");
@@ -146,13 +155,30 @@
             $query = $query . ');';
             sqlQuery($query, $db);
           
-          elseif(isset($_GET["edit"]) && isset($_GET["table"])):
-            sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_GET["departement"] . "', NOM_FONCTION='" . $_GET["fonction"] . "' WHERE NO=" . $_GET["employe_id"],$db);
+          elseif(isset($_GET["edit_employe"]) && isset($_GET["table"])):
+            if($_GET["departement"]=='NULL' && $_GET["fonction"]=='NULL'):
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT=NULL, NOM_FONCTION=NULL WHERE NO=" . $_GET["employe_id"],$db);
+            elseif($_GET["departement"]=='NULL'):
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT=NULL, NOM_FONCTION='" . $_GET["fonction"] . "' WHERE NO=" . $_GET["employe_id"],$db);
+            elseif($_GET["fonction"]=='NULL'):
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_GET["departement"] . "', NOM_FONCTION=NULL WHERE NO=" . $_GET["employe_id"],$db);
+            else:
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_GET["departement"] . "', NOM_FONCTION='" . $_GET["fonction"] . "' WHERE NO=" . $_GET["employe_id"],$db);
+            endif;
+          
+          elseif(isset($_GET["edit_projet"]) && isset($_GET["table"]) && $_GET["edited_projet"] != 'NULL'):
+            if($_GET["budget_projet"] != NULL):
+              echo("UPDATE Projet SET BUDGET=" . $_GET["budget_projet"]  . " WHERE NOM='" . $_GET["edited_projet"] . "'");
+              sqlQuery("UPDATE Projet SET BUDGET=" . $_GET["budget_projet"]  . " WHERE NOM='" . $_GET["edited_projet"] . "'",$db);
+            else:
+              echo("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_GET["edited_projet"] . "'");
+              sqlQuery("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_GET["edited_projet"] . "'",$db);
+            endif;
           endif;
           $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
           $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
           printTable($tuples,$columns); 
-          endif;?>
+        endif;?>
       </div>
       
       <?php
@@ -161,39 +187,65 @@
           $departements = sqlQuery('SELECT NOM FROM Departement',$db);
           $fonctions = sqlQuery('SELECT NOM FROM Fonction',$db);
       ?>
-        <div class="justify-content-center">
-          <br>
-          <p>Modification des attributs d'un employé :</p>
-          <form action='add.php' method='GET'>
-            <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
-            <input name="edit" value="TRUE" type="hidden">
-            <?php
-              echo("NO :");
-              echo("<select name='employe_id'>");
-              echo("<option value=NULL>---</option>");
-              foreach($employes as $employe):
-                echo("<option value='" . $employe[0] . "'>" . $employe[0]  . "</option>");
-              endforeach;
-              echo("</select>");
-              echo("<br><br>DEPARTEMENT :");
-              echo("<select name='departement'>");
-              echo("<option value=NULL>---</option>");
-              foreach($departements as $departement):
-                echo("<option value='" . $departement[0] . "'>" . $departement[0]  . "</option>");
-              endforeach;
-              echo("</select>");
-              echo("<br><br>FONCTION :");
-              echo("<select name='fonction'>");
-              echo("<option value=NULL>---</option>");
-              foreach($fonctions as $fonction):
-                echo("<option value='" . $fonction[0] . "'>" . $fonction[0]  . "</option>");
-              endforeach;
-              echo("</select>");
-              echo("<br><br>");
-            ?>
-            <button type='submit'>Modifier employé</button>
-          </form>
-        </div>
+          <div class="justify-content-center">
+            <br>
+            <p>Modification des attributs d'un employé :</p>
+            <form action='add.php' method='GET'>
+              <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
+              <input name="edit_employe" value="TRUE" type="hidden">
+              <?php
+                echo("NO :");
+                echo("<select name='employe_id'>");
+                echo("<option value=NULL>---</option>");
+                foreach($employes as $employe):
+                  echo("<option value='" . $employe[0] . "'>" . $employe[0]  . "</option>");
+                endforeach;
+                echo("</select>");
+                echo("<br><br>DEPARTEMENT :");
+                echo("<select name='departement'>");
+                echo("<option value=NULL>---</option>");
+                foreach($departements as $departement):
+                  echo("<option value='" . $departement[0] . "'>" . $departement[0]  . "</option>");
+                endforeach;
+                echo("</select>");
+                echo("<br><br>FONCTION :");
+                echo("<select name='fonction'>");
+                echo("<option value=NULL>---</option>");
+                foreach($fonctions as $fonction):
+                  echo("<option value='" . $fonction[0] . "'>" . $fonction[0]  . "</option>");
+                endforeach;
+                echo("</select>");
+                echo("<br><br>");
+              ?>
+              <button type='submit'>Modifier employé</button>
+            </form>
+          </div>
+      <?php
+        elseif(isset($_GET["table"]) && $_GET["table"]=='Projet'):
+          $projets = sqlQuery('SELECT NOM FROM Projet',$db);
+      ?>
+          <div class="justify-content-center">
+            <br>
+            <p>Modification du budget d'un projet :</p>
+            <form action='add.php' method='GET'>
+              <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
+              <input name="edit_projet" value="TRUE" type="hidden">
+              <?php
+                echo("PROJET :");
+                echo("<select name='edited_projet'>");
+                echo("<option value=NULL>---</option>");
+                foreach($projets as $projet):
+                  echo("<option value='" . $projet[0] . "'>" . $projet[0]  . "</option>");
+                endforeach;
+                echo("</select>");
+              ?>
+              <br><br>
+              <label for="budget_projet">Nouveau budget :</label>
+              <input type="text" id="budget_projet" name="budget_projet">
+              <br><br>
+              <button type='submit'>Mettre à jour le budget</button>
+            </form>
+          </div>
       <?php
         endif;
       ?>
