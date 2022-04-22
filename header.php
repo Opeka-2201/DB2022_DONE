@@ -5,8 +5,8 @@
       </a>
 
       <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-        <li><a href="/index.php?connected=true" class="nav-link px-2 link-dark">Home</a></li>
-        <li><a href="/search.php" class="nav-link px-2 link-dark">Search</a></li>
+        <li><a href="/index.php?connected=true" class="nav-link px-2 link-dark">Acceuil</a></li>
+        <li><a href="/search.php" class="nav-link px-2 link-dark">Tri</a></li>
         <li><a href="/tasks_project.php" class="nav-link px-2 link-dark">Tâches/Projet</a></li>
         <li><a href="/add.php" class="nav-link px-2 link-dark">Ajout</a></li>
         <li><a href="/tasks_management.php" class="nav-link px-2 link-dark">Tâches</a></li>

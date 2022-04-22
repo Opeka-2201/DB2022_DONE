@@ -51,13 +51,13 @@
           </div>
           <div id="content">
             <ul>
-              <li>Search : permet d'effectuer une recherche dans les tables de notre base de données et de contraindre certains champs de celle-ci.</li>
-              <li>Tâches/Projet : permet de consulter les tâches relatives à un projet en incluant les employés effectuant cette tâche et le coût de la tâche grâce aux heures imputées et au taux horaire des employés.</li>
-              <li>Ajout : permet grâce à des formulaires d'ajouter des fonctions, employés et projets</li>
+              <li>Tri : permet d'afficher une table désirée de la base de données et d'effectuer un tri sur les différentes colonnes de celle-ci.</li>
+              <li>Tâches/Projet : permet d'afficher les tâche de tous les projets et des les filtrer selon un projet spécifique. Affiche également le coût des tâches grâce au taux horaire de la fonction de l'employé réalisant la tâche.</li>
+              <li>Ajout : permet d'ajouter des projets, des employés et des fonctions via des formulaires. Permet également de modifier le département et la fonction d'un employé.</li>
               <li>Tâches : permet d'accéder à la création des tâches et l'imputation des heures de travail sur celles-ci et calculer le budget grâce au taux horaire des employés. Vous pourrez également décider de mettre un terme à un projet.</li>
-              <li>Employé/projet : Permet d'afficher la liste des employés ayant participé à un projet, qu'ils soient employés, chefs ou expert et affiche leur fonction dans le projet.</li>
-              <li>Projets : Tableau de bord concernant les projets et regroupant toutes les informations liés à ceux-ci.</li>
-              <li>Employés : Tableau de bord concernant les employés </li>
+              <li>Employé/projet : Permet d'afficher la liste des employés ayant participé à tous les projet, qu'ils soient employés, chefs ou expert et affiche leur fonction dans les projets.</li>
+              <li>Projets : Tableau de bord concernant les projets et regroupant toutes les informations liées à ceux-ci.</li>
+              <li>Employés : Tableau de bord concernant les employés et regroupant toutes les informations liées à ceux-ci. </li>
             </ul>
           </div>
         </div>

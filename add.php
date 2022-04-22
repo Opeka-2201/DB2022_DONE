@@ -36,7 +36,7 @@
       catch (Exception $e)
       {
         die('Erreur!');
-      } 
+      }
     ?>
 
 
@@ -68,7 +68,7 @@
           <?php
             foreach($columns as $column):
               if($_GET["table"] == "Projet" && $column[0] == 'CHEF'):
-                $chefs = sqlQuery('SELECT NOM FROM Employe',$db);
+                $chefs = sqlQuery('SELECT NOM FROM Employe WHERE NOM_DEPARTEMENT != "NULL" AND NOM_FONCTION != "NULL"',$db);
                 echo("CHEF ");
                 echo("<select name='CHEF'>");
                 foreach ($chefs as $chef):
@@ -76,11 +76,19 @@
                   echo("<option value=" . $id[0][0] . ">" . $chef[0] . "</option>");
                 endforeach;
                 echo("</select>");
-                
+              elseif($_GET["table"] == "Projet" && $column[0] == 'DEPARTEMENT'):
+                $departements = sqlQuery('SELECT NOM FROM DEPARTEMENT',$db);
+                echo("DEPARTEMENT ");
+                echo("<select name='DEPARTEMENT'>");
+                foreach ($departements as $departement):
+                  echo("<option value=" . $departement[0] . ">" . $departement[0] . "</option>");
+                endforeach;
+                echo("</select>");
               elseif($_GET["table"] == "Employe" && $column[0] == "NOM_DEPARTEMENT"):
                 $departements = sqlQuery('SELECT NOM FROM Departement', $db);
                 echo("NOM_DEPARTEMENT ");
                 echo("<select name='NOM_DEPARTEMENT'>");
+                echo("<option value=NULL>---</option>");
                 foreach ($departements as $departement):
                 echo("<option value='" . $departement[0] . "'>" . $departement[0] . "</option>");
                 endforeach;
@@ -90,6 +98,7 @@
                 $fonctions = sqlQuery('SELECT NOM FROM Fonction', $db);
                 echo("NOM_FONCTION ");
                 echo("<select name='NOM_FONCTION'>");
+                echo("<option value=NULL>---</option>");
                 foreach ($fonctions as $fonction):
                 echo("<option value='" . $fonction[0] . "'>" . $fonction[0] . "</option>");
                 endforeach;
@@ -121,15 +130,22 @@
               foreach($_GET as $key => $value):
                 if($key == "table" || $key == "added"):
                   continue;
+                elseif($value == 'NULL' || $value == ''):
+                  $query = $query .' NULL,';
+                  continue;
                 elseif(strpos(" " . $key, 'DATE') != false):
                   $query = $query . "str_to_date('" . $value . "', '%Y-%m-%d'),";
                   continue;
-                endif;
+                else:
                 $query = $query . "'" .  $value . "'" . ',';
+                endif;
               endforeach;
               $query = substr_replace($query,"", -1);
               $query = $query . ');';
               sqlQuery($query, $db);
+            
+            elseif(isset($_GET["edit"]) && isset($_GET["table"])):
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_GET["departement"] . "', NOM_FONCTION='" . $_GET["fonction"] . "' WHERE NO=" . $_GET["employe_id"],$db);
             endif;
             $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
             $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
@@ -137,6 +153,48 @@
             endif;?>
         </form>
       </div>
+      
+      <?php
+        if(isset($_GET["table"]) && $_GET["table"]=='Employe'):
+          $employes = sqlQuery('SELECT NO FROM Employe',$db);
+          $departements = sqlQuery('SELECT NOM FROM Departement',$db);
+          $fonctions = sqlQuery('SELECT NOM FROM Fonction',$db);
+      ?>
+        <div class="justify-content-center">
+          <br><br>
+          <form action='add.php' method='GET'>
+            <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
+            <input name="edit" value="TRUE" type="hidden">
+            <?php
+              echo("NO :");
+              echo("<select name='employe_id'>");
+              echo("<option value=NULL>---</option>");
+              foreach($employes as $employe):
+                echo("<option value='" . $employe[0] . "'>" . $employe[0]  . "</option>");
+              endforeach;
+              echo("</select>");
+              echo("<br><br>DEPARTEMENT :");
+              echo("<select name='departement'>");
+              echo("<option value=NULL>---</option>");
+              foreach($departements as $departement):
+                echo("<option value='" . $departement[0] . "'>" . $departement[0]  . "</option>");
+              endforeach;
+              echo("</select>");
+              echo("<br><br>FONCTION :");
+              echo("<select name='fonction'>");
+              echo("<option value=NULL>---</option>");
+              foreach($fonctions as $fonction):
+                echo("<option value='" . $fonction[0] . "'>" . $fonction[0]  . "</option>");
+              endforeach;
+              echo("</select>");
+              echo("<br><br>");
+            ?>
+            <button type='submit'>Modifier employé</button>
+          </form>
+        </div>
+      <?php
+        endif;
+      ?>
     </div>
   </body>
 </html>

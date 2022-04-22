@@ -10,6 +10,7 @@
 
   <body>
     <?php
+      require __DIR__ . '/functions.php';
       include("header.php");
       try
       {
@@ -19,8 +20,19 @@
       {
         die('Erreur!');
       }
+
+      $emps = sqlQuery('SELECT NO FROM Employe',$db);
+      foreach($emps as $emp):
+        $currentEmp = $emp[0];
+        $query = "SELECT PROJET FROM Tache WHERE EMPLOYE=" . $currentEmp ." UNION SELECT PROJET FROM Rapport WHERE EXPERT=" . $currentEmp ." UNION SELECT NOM FROM Projet WHERE CHEF =" . $currentEmp;
+        $projectsOfEmp = sqlQuery($query,$db);
+        $projects_db = sqlQuery('SELECT NOM FROM Projet',$db);
+        $isEmpOK = true;
+        if(cmpTable($projects_db,$projectsOfEmp)):
+          echo($currentEmp . "<br>");
+        endif;
+      endforeach;
     ?>
-    <?php include('footer.php'); ?>
   </body>
 
 </html>

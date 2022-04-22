@@ -27,14 +27,6 @@
 
   <body>
     <?php
-      try
-      {
-        $db = new PDO('mysql:host=localhost;dbname=group25;charset=utf8', 'root', 'root');
-      }
-      catch (Exception $e)
-      {
-        die('Erreur!');
-      }
       require __DIR__ . '/functions.php';
       include("header.php");
       try
@@ -63,51 +55,22 @@
         </form>
       </div>
 
-      <form action ='tasks_project.php' method = 'GET'>
-          <input name="projet" value="NULL" type ="hidden">
-          <label for="project_id">Project ID : </label>
-          <input type="text" id="project_id" name="project_id">
-          <br><br>
-          <label for="project_hours">Project hours : </label>
-          <input type="text" id="project_hours" name="project_hours">
-          <br><br>
 
-          <button type="submit">Soumettre heures</button>
-          <br><br>
-      </form>
 
       <div class="justify-content-center">
         <?php 
-              if(isset($_GET["projet"]) && !empty($_GET["project_id"]) && !empty($_GET["project_hours"])):
-                sqlQuery("UPDATE Tache SET NB_HEURES = " . $_GET["project_hours"] . " WHERE ID = " . $_GET["project_id"], $db);
-                $tasks = sqlQuery('SELECT T.ID as "ID", T.EMPLOYE as "EMPLOYE" , E.NOM as "NOM", T.PROJET as "PROJET", E.NOM_FONCTION as "FONCTION", F.TAUX_HORAIRE as "TAUX_HORAIRE", T.NB_HEURES as "NB_HEURES", F.TAUX_HORAIRE * T.NB_HEURES as "COUT" FROM Tache T, Employe E, Fonction F WHERE T.EMPLOYE = E.NO AND E.NOM_FONCTION = F.NOM', $db);
-                $columns = array(array('ID'),array("EMPLOYE"),array("NOM"),array("PROJET"),array("FONCTION"),array("TAUX_HORAIRE"),array("NB_HEURES"),array("COUT"));
-                printTable($tasks, $columns);
-              
-                elseif((isset(($_GET["project_id"])) && isset($_GET["project_hours"])) && (empty($_GET["project_id"]) || empty($_GET["project_hours"]))):
-                ?>
-                <div class="error-message" role="alert">
-                  <p>Veuillez spécifier un ID de projet ET un nombre d heures</p>
-                </div>
+          if(isset($_GET["projet"]) && ($_GET["projet"] != "NULL")):
+            $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_GET["projet"] . "'", $db);
+            $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
+            printTable($tasks, $columns);
 
-                <?php
-                $tasks = sqlQuery('SELECT T.ID as "ID", T.EMPLOYE as "EMPLOYE" , E.NOM as "NOM", T.PROJET as "PROJET", E.NOM_FONCTION as "FONCTION", F.TAUX_HORAIRE as "TAUX_HORAIRE", T.NB_HEURES as "NB_HEURES", F.TAUX_HORAIRE * T.NB_HEURES as "COUT" FROM Tache T, Employe E, Fonction F WHERE T.EMPLOYE = E.NO AND E.NOM_FONCTION = F.NOM', $db);
-                $columns = array(array('ID'),array("EMPLOYE"),array("NOM"),array("PROJET"),array("FONCTION"),array("TAUX_HORAIRE"),array("NB_HEURES"),array("COUT"));
-                printTable($tasks, $columns);
-              
-                elseif(isset($_GET["projet"]) && ($_GET["projet"] != "NULL")):
-                $tasks = sqlQuery('SELECT T.ID as "ID", T.EMPLOYE as "EMPLOYE" , E.NOM as "NOM", T.PROJET as "PROJET", E.NOM_FONCTION as "FONCTION", F.TAUX_HORAIRE as "TAUX_HORAIRE", T.NB_HEURES as "NB_HEURES", F.TAUX_HORAIRE * T.NB_HEURES as "COUT" FROM Tache T, Employe E, Fonction F WHERE T.EMPLOYE = E.NO AND E.NOM_FONCTION = F.NOM AND T.PROJET = "' . $_GET["projet"] . '"', $db);
-                $columns = array(array('ID'),array("EMPLOYE"),array("NOM"),array("PROJET"),array("FONCTION"),array("TAUX_HORAIRE"),array("NB_HEURES"),array("COUT"));
-                printTable($tasks, $columns);
-
-              else:
-                $tasks = sqlQuery('SELECT T.ID as "ID", T.EMPLOYE as "EMPLOYE" , E.NOM as "NOM", T.PROJET as "PROJET", E.NOM_FONCTION as "FONCTION", F.TAUX_HORAIRE as "TAUX_HORAIRE", T.NB_HEURES as "NB_HEURES", F.TAUX_HORAIRE * T.NB_HEURES as "COUT" FROM Tache T, Employe E, Fonction F WHERE T.EMPLOYE = E.NO AND E.NOM_FONCTION = F.NOM', $db);
-                $columns = array(array('ID'),array("EMPLOYE"),array("NOM"),array("PROJET"),array("FONCTION"),array("TAUX_HORAIRE"),array("NB_HEURES"),array("COUT"));
-                printTable($tasks, $columns);
-              endif;
+          else:
+            $tasks = sqlQuery('SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM', $db);
+            $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
+            printTable($tasks, $columns);
+          endif;
         ?>
       </div>
     </div>
   </body>
-
 </html>
