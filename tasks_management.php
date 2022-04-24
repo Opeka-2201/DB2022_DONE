@@ -43,7 +43,7 @@
     <div class="px-4 py-5 my-5">
       <div class="d-flex justify-content-center">
         <p>Choisissez un projet : </p>
-        <form action ='tasks_management.php' method = 'GET'>
+        <form action ='tasks_management.php' method = 'POST'>
           <select name="projet" id="projet-select">
               <option value=NULL>---</option>
               <?php
@@ -59,11 +59,11 @@
 
       <div class="justify-content-center">
         <?php
-          if(isset($_GET["projet"]) && $_GET["projet"] != 'NULL' && isset($_GET["task_id"]) && isset($_GET["task_hours"]) && $_GET["task_id"] != 'NULL' && $_GET["task_hours"] != ''):
-            $old_hours = sqlQuery('SELECT NB_HEURES FROM Tache WHERE ID="' . $_GET["task_id"] . '"',$db);
-            $new_hours = $old_hours[0][0] + intval($_GET["task_hours"]);
+          if(isset($_POST["projet"]) && $_POST["projet"] != 'NULL' && isset($_POST["task_id"]) && isset($_POST["task_hours"]) && $_POST["task_id"] != 'NULL' && $_POST["task_hours"] != ''):
+            $old_hours = sqlQuery('SELECT NB_HEURES FROM Tache WHERE ID="' . $_POST["task_id"] . '"',$db);
+            $new_hours = $old_hours[0][0] + intval($_POST["task_hours"]);
             if($new_hours >= $old_hours[0][0]):
-              sqlQuery('UPDATE Tache SET NB_HEURES=' . $new_hours . ' WHERE ID=' . $_GET["task_id"],$db);
+              sqlQuery('UPDATE Tache SET NB_HEURES=' . $new_hours . ' WHERE ID=' . $_POST["task_id"],$db);
             else:
             ?>
               <div class="error-message" role="alert">
@@ -72,9 +72,9 @@
             <?php
             endif;
           
-          elseif(isset($_GET["projet"]) && $_GET["projet"] != 'NULL' && isset($_GET["add_employe"]) && $_GET["add_employe"] != NULL && isset($_GET["add_hours"]) && $_GET["add_hours"] != ''):
-            if(intval($_GET["add_hours"]) > 0):
-              sqlQuery('INSERT INTO Tache (EMPLOYE, PROJET, NB_HEURES) VALUES ("' . $_GET["add_employe"] . '","' . $_GET["projet"] . '",' . $_GET["add_hours"] . ')',$db);
+          elseif(isset($_POST["projet"]) && $_POST["projet"] != 'NULL' && isset($_POST["add_employe"]) && $_POST["add_employe"] != NULL && isset($_POST["add_hours"]) && $_POST["add_hours"] != ''):
+            if(intval($_POST["add_hours"]) > 0):
+              sqlQuery('INSERT INTO Tache (EMPLOYE, PROJET, NB_HEURES) VALUES ("' . $_POST["add_employe"] . '","' . $_POST["projet"] . '",' . $_POST["add_hours"] . ')',$db);
             else:
             ?>
               <div class="error-message" role="alert">
@@ -83,46 +83,46 @@
             <?php
             endif;
           
-          elseif(isset($_GET["projet"]) && $_GET["projet"] != 'NULL' && isset($_GET["avis_expert"])):
+          elseif(isset($_POST["projet"]) && $_POST["projet"] != 'NULL' && isset($_POST["avis_expert"])):
             $total_cost = 0;
-            $tasks_cost = sqlQuery('SELECT Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = "' . $_GET["projet"] . '"',$db);
+            $tasks_cost = sqlQuery('SELECT Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = "' . $_POST["projet"] . '"',$db);
             foreach($tasks_cost as $task_cost):
               $total_cost += intval($task_cost[0]); 
             endforeach;
             $end_date = sqlQuery('SELECT DATE(NOW())',$db);
-            sqlQuery('UPDATE Projet SET COUT=' . $total_cost . ', DATE_FIN="' . $end_date[0][0]  .'", AVIS_EXPERT="' . $_GET["avis_expert"]  .'" WHERE NOM="' . $_GET["projet"] . '"', $db);
-          elseif(isset($_GET["projet"]) && $_GET["projet"] != 'NULL' && isset($_GET["edit_opinion"])):
-            if($_GET["edit_opinion"] == 'NULL'):
-              sqlQuery('UPDATE Projet SET AVIS_EXPERT=' . $_GET["edit_opinion"] . ' WHERE NOM="' . $_GET["projet"] .'"' ,$db);
+            sqlQuery('UPDATE Projet SET COUT=' . $total_cost . ', DATE_FIN="' . $end_date[0][0]  .'", AVIS_EXPERT="' . $_POST["avis_expert"]  .'" WHERE NOM="' . $_POST["projet"] . '"', $db);
+          elseif(isset($_POST["projet"]) && $_POST["projet"] != 'NULL' && isset($_POST["edit_opinion"])):
+            if($_POST["edit_opinion"] == 'NULL'):
+              sqlQuery('UPDATE Projet SET AVIS_EXPERT=' . $_POST["edit_opinion"] . ' WHERE NOM="' . $_POST["projet"] .'"' ,$db);
             else:
-              sqlQuery('UPDATE Projet SET AVIS_EXPERT="' . $_GET["edit_opinion"] . '" WHERE NOM="' . $_GET["projet"] .'"' ,$db);
+              sqlQuery('UPDATE Projet SET AVIS_EXPERT="' . $_POST["edit_opinion"] . '" WHERE NOM="' . $_POST["projet"] .'"' ,$db);
             endif;
           endif;
 
-          if(isset($_GET["projet"]) && $_GET["projet"] == 'NULL'):
+          if(isset($_POST["projet"]) && $_POST["projet"] == 'NULL'):
 
-          elseif(isset($_GET["projet"]) && $_GET["projet"] != 'NULL'):
+          elseif(isset($_POST["projet"]) && $_POST["projet"] != 'NULL'):
             ?>
             <br>
-            <p>Détails concernant le projet <?php echo($_GET["projet"]);?> :</p>
+            <p>Détails concernant le projet <?php echo($_POST["projet"]);?> :</p>
             <?php
-            $date_fin = sqlQuery('SELECT DATE_FIN FROM Projet WHERE Projet.NOM = "' . $_GET["projet"] . '"', $db);
+            $date_fin = sqlQuery('SELECT DATE_FIN FROM Projet WHERE Projet.NOM = "' . $_POST["projet"] . '"', $db);
             if(isset($date_fin[0]) && $date_fin[0][0] != NULL):
-              $project_details = sqlQuery('SELECT * FROM Projet WHERE Projet.NOM = "' . $_GET["projet"] . '"',$db);
+              $project_details = sqlQuery('SELECT * FROM Projet WHERE Projet.NOM = "' . $_POST["projet"] . '"',$db);
               $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Projet' ORDER BY ORDINAL_POSITION",$db);
               printTableCost($project_details, $columns);
 
-              echo('<br><br><p>Liste des tâches du projet ' . $_GET["projet"] . ' : </p>');
-              $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_GET["projet"] . "'", $db);
+              echo('<br><br><p>Liste des tâches du projet ' . $_POST["projet"] . ' : </p>');
+              $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_POST["projet"] . "'", $db);
               $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
               printTable($tasks, $columns);
 
               ?>
               <br>
-              <p>Modification de l'avis de l'expert pour le projet <?php echo($_GET["projet"]);?> :</p>
+              <p>Modification de l'avis de l'expert pour le projet <?php echo($_POST["projet"]);?> :</p>
 
-              <form action='tasks_management.php' method='GET'>
-                <input name="projet" value="<?php echo($_GET["projet"]);?>" type ="hidden">
+              <form action='tasks_management.php' method='POST'>
+                <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
                 <?php echo("Avis de l'expert :"); ?>
                 <select name='edit_opinion'>
                   <option value=NULL>---</option>
@@ -135,23 +135,23 @@
               <?php
 
             else:
-              $project_details = sqlQuery('SELECT * FROM Projet WHERE Projet.NOM = "' . $_GET["projet"] . '"',$db);
+              $project_details = sqlQuery('SELECT * FROM Projet WHERE Projet.NOM = "' . $_POST["projet"] . '"',$db);
               $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Projet' ORDER BY ORDINAL_POSITION",$db);
               printTable($project_details, $columns);
 
-              echo('<br><br><p>Liste des tâches du projet ' . $_GET["projet"] . ' : </p>');
-              $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_GET["projet"] . "'", $db);
+              echo('<br><br><p>Liste des tâches du projet ' . $_POST["projet"] . ' : </p>');
+              $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_POST["projet"] . "'", $db);
               $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
               printTable($tasks, $columns);
               
-              $task_ids = sqlQuery('SELECT ID FROM Tache WHERE Tache.PROJET ="' . $_GET["projet"] . '"',$db);
-              $employes_not_in_project = sqlQuery("SELECT NO FROM Employe WHERE Employe.NO NOT IN (SELECT EMPLOYE FROM Tache WHERE Tache.PROJET='" . $_GET["projet"]  . "')", $db);
+              $task_ids = sqlQuery('SELECT ID FROM Tache WHERE Tache.PROJET ="' . $_POST["projet"] . '"',$db);
+              $employes_not_in_project = sqlQuery("SELECT NO FROM Employe WHERE Employe.NO NOT IN (SELECT EMPLOYE FROM Tache WHERE Tache.PROJET='" . $_POST["projet"]  . "')", $db);
               ?>
               <div class="d-flex justify-content-between">
                 <div>
-                  <br><br><p>Soumission des heures pour les tâches du projet <?php echo($_GET["projet"]);?> : </p>
-                  <form action ='tasks_management.php' method = 'GET'>
-                    <input name="projet" value="<?php echo($_GET["projet"]);?>" type ="hidden">
+                  <br><br><p>Soumission des heures pour les tâches du projet <?php echo($_POST["projet"]);?> : </p>
+                  <form action ='tasks_management.php' method = 'POST'>
+                    <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
                     <?php echo("ID Tâche : ");
                       echo("<select name='task_id'>");
                       echo("<option value=NULL>---</option>");
@@ -171,9 +171,9 @@
                 </div>
 
                 <div>
-                  <br><br><p>Ajout de tâches pour le projet  <?php echo($_GET["projet"]);?> : </p>
-                  <form action='tasks_management.php' method='GET'>
-                    <input name="projet" value="<?php echo($_GET["projet"]);?>" type ="hidden">
+                  <br><br><p>Ajout de tâches pour le projet  <?php echo($_POST["projet"]);?> : </p>
+                  <form action='tasks_management.php' method='POST'>
+                    <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
                     <?php
                       echo("Employés disponibles : ");
                       echo("<select name='add_employe'>");
@@ -191,9 +191,9 @@
                 </div>
 
                 <div>
-                  <br><br><p>Formulaire de fin de projet <?php echo($_GET["projet"]);?> : </p>
-                  <form action='tasks_management.php' method='GET'>
-                    <input name="projet" value="<?php echo($_GET["projet"]);?>" type ="hidden">
+                  <br><br><p>Formulaire de fin de projet <?php echo($_POST["projet"]);?> : </p>
+                  <form action='tasks_management.php' method='POST'>
+                    <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
                     <?php echo("Avis expert : "); ?>
                     <select name='avis_expert'>
                       <option value=NULL>---</option>

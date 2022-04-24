@@ -41,7 +41,7 @@
     <div class="px-4 py-5 my-5">
       <div class="d-flex justify-content-center">
         <p>Choisissez un projet : </p>
-        <form action ='tasks_project.php' method = 'GET'>
+        <form action ='tasks_project.php' method = 'POST'>
           <select name="projet" id="projet-select">
               <option value="NULL">---</option>
               <?php
@@ -59,11 +59,11 @@
 
       <div class="justify-content-center">
         <?php 
-          if(isset($_GET["projet"]) && ($_GET["projet"] != "NULL")):
+          if(isset($_POST["projet"]) && ($_POST["projet"] != "NULL")):
           ?>
-            <p>Tâches relatives au projet <?php echo($_GET["projet"]);?> :</p>
+            <p>Tâches relatives au projet <?php echo($_POST["projet"]);?> :</p>
           <?php
-            $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_GET["projet"] . "'", $db);
+            $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_POST["projet"] . "'", $db);
             $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
             printTable($tasks, $columns);
 

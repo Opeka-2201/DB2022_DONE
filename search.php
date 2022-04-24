@@ -41,7 +41,7 @@
     <div class="px-4 py-5 my-5">
       <div class="d-flex justify-content-center">
         <p>Choisissez une table : </p>
-        <form action ='search.php' method = 'GET'>
+        <form action ='search.php' method = 'POST'>
           <select name="table" id="table-select">
               <option value="NULL">---</option>
               <?php
@@ -55,13 +55,13 @@
         </form>
       </div>
       <div class="justify-content-center">
-        <?php if(isset($_GET["table"]) && ($_GET["table"] != "NULL")):
-                $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
-                $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
+        <?php if(isset($_POST["table"]) && ($_POST["table"] != "NULL")):
+                $tuples = sqlQuery('SELECT * FROM ' . $_POST["table"], $db);
+                $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_POST["table"]. "' ORDER BY ORDINAL_POSITION", $db);
         ?>
-        <p>Filtre sur la table <?php echo($_GET["table"]);?> :</p>
-        <form action='search.php' method = 'GET'>
-          <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
+        <p>Filtre sur la table <?php echo($_POST["table"]);?> :</p>
+        <form action='search.php' method = 'POST'>
+          <input name="table" value="<?php echo($_POST["table"]);?>" type ="hidden">
         <?php
               foreach($columns as $column):
         ?>       
@@ -74,7 +74,7 @@
         <br>
         <div class="table-search">
           <?php
-                printTable(filterData($_GET,$db),$columns);
+                printTable(filterData($_POST,$db),$columns);
                 endif;
           ?>
         </div>

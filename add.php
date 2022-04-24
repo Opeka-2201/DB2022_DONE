@@ -44,7 +44,7 @@
       
       <div class="d-flex justify-content-center">
         <p>Choisissez la table à laquelle ajouter des données : </p>
-        <form action ='/add.php' method = 'GET'>
+        <form action ='/add.php' method = 'POST'>
           <select name="table" id="table-select">
               <option value="NULL">---</option>
               <option value="Projet">Projet</option>
@@ -57,18 +57,18 @@
       </div>
 
       <div class="justify-content-center">
-        <?php if(isset($_GET["table"]) && ($_GET["table"] != "NULL")):
-                $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
-                $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
+        <?php if(isset($_POST["table"]) && ($_POST["table"] != "NULL")):
+                $tuples = sqlQuery('SELECT * FROM ' . $_POST["table"], $db);
+                $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_POST["table"]. "' ORDER BY ORDINAL_POSITION", $db);
         ?>
-        <p>Ajout d'un élément dans la table <?php echo($_GET["table"]);?> :</p>
-        <form action='add.php' method = 'GET'>
-          <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
+        <p>Ajout d'un élément dans la table <?php echo($_POST["table"]);?> :</p>
+        <form action='add.php' method = 'POST'>
+          <input name="table" value="<?php echo($_POST["table"]);?>" type ="hidden">
           <input name="added" value="TRUE" type ="hidden">
        
           <?php
             foreach($columns as $column):
-              if($_GET["table"] == "Projet" && $column[0] == 'CHEF'):
+              if($_POST["table"] == "Projet" && $column[0] == 'CHEF'):
                 $chefs = sqlQuery('SELECT NOM FROM Employe WHERE NOM_DEPARTEMENT != "NULL" AND NOM_FONCTION != "NULL"',$db);
                 echo("CHEF ");
                 echo("<select name='CHEF'>");
@@ -77,7 +77,7 @@
                   echo("<option value=" . $id[0][0] . ">" . $chef[0] . "</option>");
                 endforeach;
                 echo("</select>");
-              elseif($_GET["table"] == "Projet" && $column[0] == 'DEPARTEMENT'):
+              elseif($_POST["table"] == "Projet" && $column[0] == 'DEPARTEMENT'):
                 $departements = sqlQuery('SELECT NOM FROM DEPARTEMENT',$db);
                 echo("DEPARTEMENT ");
                 echo("<select name='DEPARTEMENT'>");
@@ -85,7 +85,7 @@
                   echo("<option value=" . $departement[0] . ">" . $departement[0] . "</option>");
                 endforeach;
                 echo("</select>");
-              elseif($_GET["table"] == "Projet" && $column[0] == 'AVIS_EXPERT'):
+              elseif($_POST["table"] == "Projet" && $column[0] == 'AVIS_EXPERT'):
                 echo('AVIS_EXPERT :')
               ?>
                 <select name="AVIS_EXPERT">
@@ -94,7 +94,7 @@
                   <option value='ÉCHEC'>ÉCHEC</option>
                 </select>
               <?php
-              elseif($_GET["table"] == "Employe" && $column[0] == "NOM_DEPARTEMENT"):
+              elseif($_POST["table"] == "Employe" && $column[0] == "NOM_DEPARTEMENT"):
                 $departements = sqlQuery('SELECT NOM FROM Departement', $db);
                 echo("NOM_DEPARTEMENT ");
                 echo("<select name='NOM_DEPARTEMENT'>");
@@ -104,7 +104,7 @@
                 endforeach;
                 echo("</select>");
               
-              elseif($_GET["table"] == "Employe" && $column[0] == "NOM_FONCTION"):
+              elseif($_POST["table"] == "Employe" && $column[0] == "NOM_FONCTION"):
                 $fonctions = sqlQuery('SELECT NOM FROM Fonction', $db);
                 echo("NOM_FONCTION ");
                 echo("<select name='NOM_FONCTION'>");
@@ -127,9 +127,9 @@
         </form>
         <br>
         <?php 
-          if(isset($_GET["added"]) && isset($_GET["table"])):
-            $query = "INSERT INTO " . $_GET["table"] . " (";
-            foreach($_GET as $key => $value):
+          if(isset($_POST["added"]) && isset($_POST["table"])):
+            $query = "INSERT INTO " . $_POST["table"] . " (";
+            foreach($_POST as $key => $value):
               if($key == "table" || $key == "added"):
                 continue;
               endif;
@@ -138,7 +138,7 @@
             $query = substr_replace($query,"", -1);
             $query = $query . ') VALUES (';
             
-            foreach($_GET as $key => $value):
+            foreach($_POST as $key => $value):
               if($key == "table" || $key == "added"):
                 continue;
               elseif($value == 'NULL' || $value == ''):
@@ -155,34 +155,34 @@
             $query = $query . ');';
             sqlQuery($query, $db);
           
-          elseif(isset($_GET["edit_employe"]) && isset($_GET["table"])):
-            if($_GET["departement"]=='NULL' && $_GET["fonction"]=='NULL'):
-              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT=NULL, NOM_FONCTION=NULL WHERE NO=" . $_GET["employe_id"],$db);
-            elseif($_GET["departement"]=='NULL'):
-              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT=NULL, NOM_FONCTION='" . $_GET["fonction"] . "' WHERE NO=" . $_GET["employe_id"],$db);
-            elseif($_GET["fonction"]=='NULL'):
-              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_GET["departement"] . "', NOM_FONCTION=NULL WHERE NO=" . $_GET["employe_id"],$db);
+          elseif(isset($_POST["edit_employe"]) && isset($_POST["table"])):
+            if($_POST["departement"]=='NULL' && $_POST["fonction"]=='NULL'):
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT=NULL, NOM_FONCTION=NULL WHERE NO=" . $_POST["employe_id"],$db);
+            elseif($_POST["departement"]=='NULL'):
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT=NULL, NOM_FONCTION='" . $_POST["fonction"] . "' WHERE NO=" . $_POST["employe_id"],$db);
+            elseif($_POST["fonction"]=='NULL'):
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_POST["departement"] . "', NOM_FONCTION=NULL WHERE NO=" . $_POST["employe_id"],$db);
             else:
-              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_GET["departement"] . "', NOM_FONCTION='" . $_GET["fonction"] . "' WHERE NO=" . $_GET["employe_id"],$db);
+              sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT='" . $_POST["departement"] . "', NOM_FONCTION='" . $_POST["fonction"] . "' WHERE NO=" . $_POST["employe_id"],$db);
             endif;
           
-          elseif(isset($_GET["edit_projet"]) && isset($_GET["table"]) && $_GET["edited_projet"] != 'NULL'):
-            if($_GET["budget_projet"] != NULL):
-              echo("UPDATE Projet SET BUDGET=" . $_GET["budget_projet"]  . " WHERE NOM='" . $_GET["edited_projet"] . "'");
-              sqlQuery("UPDATE Projet SET BUDGET=" . $_GET["budget_projet"]  . " WHERE NOM='" . $_GET["edited_projet"] . "'",$db);
+          elseif(isset($_POST["edit_projet"]) && isset($_POST["table"]) && $_POST["edited_projet"] != 'NULL'):
+            if($_POST["budget_projet"] != NULL):
+              echo("UPDATE Projet SET BUDGET=" . $_POST["budget_projet"]  . " WHERE NOM='" . $_POST["edited_projet"] . "'");
+              sqlQuery("UPDATE Projet SET BUDGET=" . $_POST["budget_projet"]  . " WHERE NOM='" . $_POST["edited_projet"] . "'",$db);
             else:
-              echo("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_GET["edited_projet"] . "'");
-              sqlQuery("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_GET["edited_projet"] . "'",$db);
+              echo("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_POST["edited_projet"] . "'");
+              sqlQuery("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_POST["edited_projet"] . "'",$db);
             endif;
           endif;
-          $tuples = sqlQuery('SELECT * FROM ' . $_GET["table"], $db);
-          $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_GET["table"]. "' ORDER BY ORDINAL_POSITION", $db);
+          $tuples = sqlQuery('SELECT * FROM ' . $_POST["table"], $db);
+          $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_POST["table"]. "' ORDER BY ORDINAL_POSITION", $db);
           printTable($tuples,$columns); 
         endif;?>
       </div>
       
       <?php
-        if(isset($_GET["table"]) && $_GET["table"]=='Employe'):
+        if(isset($_POST["table"]) && $_POST["table"]=='Employe'):
           $employes = sqlQuery('SELECT NO FROM Employe',$db);
           $departements = sqlQuery('SELECT NOM FROM Departement',$db);
           $fonctions = sqlQuery('SELECT NOM FROM Fonction',$db);
@@ -190,8 +190,8 @@
           <div class="justify-content-center">
             <br>
             <p>Modification des attributs d'un employé :</p>
-            <form action='add.php' method='GET'>
-              <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
+            <form action='add.php' method='POST'>
+              <input name="table" value="<?php echo($_POST["table"]);?>" type ="hidden">
               <input name="edit_employe" value="TRUE" type="hidden">
               <?php
                 echo("NO :");
@@ -221,14 +221,14 @@
             </form>
           </div>
       <?php
-        elseif(isset($_GET["table"]) && $_GET["table"]=='Projet'):
+        elseif(isset($_POST["table"]) && $_POST["table"]=='Projet'):
           $projets = sqlQuery('SELECT NOM FROM Projet',$db);
       ?>
           <div class="justify-content-center">
             <br>
             <p>Modification du budget d'un projet :</p>
-            <form action='add.php' method='GET'>
-              <input name="table" value="<?php echo($_GET["table"]);?>" type ="hidden">
+            <form action='add.php' method='POST'>
+              <input name="table" value="<?php echo($_POST["table"]);?>" type ="hidden">
               <input name="edit_projet" value="TRUE" type="hidden">
               <?php
                 echo("PROJET :");
