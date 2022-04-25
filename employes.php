@@ -34,7 +34,7 @@
         include("header.php");
         try
         {
-          $db = new PDO('mysql:host=localhost;dbname=group25;charset=utf8', 'root', 'root');
+          $db = new PDO('mysql:host=localhost;dbname=group25;charset=utf8', 'group25', '3uCTA8L2ID');
         }
         catch (Exception $e)
         {
