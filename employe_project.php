@@ -31,7 +31,7 @@
       if(isset($_SESSION['user'])):
         require __DIR__ . '/functions.php';
         include("header.php");
-        include("PDO.php")
+        include("PDO.php");
 
         $projects = sqlQuery('SELECT NOM FROM Projet',$db);
         $columns = new ArrayObject(array(array("NO"),array("NOM"),array("NOM_FONCTION")));
