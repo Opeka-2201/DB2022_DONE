@@ -47,11 +47,15 @@ function printTableCost($tuples, $columns){
 
 function sqlQuery($query, $db){
   try {
-    $db->beginTransaction();
-    $statement = $db->prepare($query);
-    $statement->execute();
-    $db->commit();
-    return $statement->fetchAll();
+    if($db->inTransaction()):
+      die("Base de données déjà en transaction");
+    else:
+      $db->beginTransaction();
+      $statement = $db->prepare($query);
+      $statement->execute();
+      $db->commit();
+      return $statement->fetchAll();
+    endif;
   } catch (\PDOException $e) {
     $db->rollBack();
     die($e->getMessage());
