@@ -6,6 +6,7 @@
   if(isset($_POST['username']) && isset($_POST['pwd'])):
     if($_POST['username']=='group25' && $_POST['pwd']=='3uCTA8L2ID'):
       $_SESSION['user'] = 'group25';
+      $_SESSION['pwd'] = '3uCTA8L2ID';
     else:
       $message = 'Erreur d\'authentification';
     endif;
