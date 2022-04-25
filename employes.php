@@ -33,7 +33,6 @@
         require __DIR__ . '/functions.php';
         include("header.php");
         include("PDO.php");
-
     ?>
         <div class="px-4 py-5 my-5">
           <div class="d-flex justify-content-center text-center">
