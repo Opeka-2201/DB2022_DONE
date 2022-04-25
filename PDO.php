@@ -6,6 +6,7 @@ try
 }
 catch (Exception $e)
 {
+  echo $e->getMessage();
   die('Erreur! ' . $host);
 }
 ?>
