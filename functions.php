@@ -46,9 +46,16 @@ function printTableCost($tuples, $columns){
 
 
 function sqlQuery($query, $db){
+  try {
+    $db->beginTransaction();
     $statement = $db->prepare($query);
     $statement->execute();
+    $db->commit();
     return $statement->fetchAll();
+  } catch (\PDOException $e) {
+    $db->rollBack();
+    die($e->getMessage());
+  }
 }
 
 function filterData($args_get,$db){
