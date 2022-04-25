@@ -32,14 +32,8 @@
       if(isset($_SESSION['user'])):
         require __DIR__ . '/functions.php';
         include("header.php");
-        try
-        {
-          $db = new PDO('mysql:host=localhost;dbname=group25;charset=utf8', 'group25', '3uCTA8L2ID');
-        }
-        catch (Exception $e)
-        {
-          die('Erreur!');
-        }
+        include("PDO.php")
+
     ?>
         <div class="px-4 py-5 my-5">
           <div class="d-flex justify-content-center text-center">

@@ -31,14 +31,8 @@
       if(isset($_SESSION['user'])):
         require __DIR__ . '/functions.php';
         include("header.php");
-        try
-        {
-          $db = new PDO('mysql:host=localhost;dbname=group25;charset=utf8', 'group25', '3uCTA8L2ID');
-        }
-        catch (Exception $e)
-        {
-          die('Erreur!');
-        }
+        include("PDO.php")
+
         $projects = sqlQuery('SELECT NOM FROM Projet',$db);
         $columns = new ArrayObject(array(array("NO"),array("NOM"),array("NOM_FONCTION")));
         $roles_query = "SELECT * FROM (SELECT E.NO, E.NOM, E.NOM_FONCTION";
