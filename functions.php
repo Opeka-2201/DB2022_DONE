@@ -1,3 +1,22 @@
+<!-- © Group25 - Bases de Données 2022 : Projet 2-->
+
+<style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+
+      td, th {
+        text-align: left;
+        padding: 8px;
+      }
+
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+</style>
+
 <?php
 
 function printTable($tuples, $columns){

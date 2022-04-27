@@ -1,3 +1,5 @@
+-- © Group25 - Bases de Données 2022 : Projet 2
+
 CREATE DATABASE group25;
 USE group25;
 CREATE TABLE Departement(

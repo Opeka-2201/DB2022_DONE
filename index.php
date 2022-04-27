@@ -1,3 +1,5 @@
+<!-- © Group25 - Bases de Données 2022 : Projet 2-->
+
 <!DOCTYPE html>
 
 <?php session_start(); ?>
