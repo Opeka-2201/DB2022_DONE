@@ -46,18 +46,18 @@
           $tb_columns = array(array("NO"),array("NOM"),array("NB_PROJETS"),array("NB_HEURES"));
 
           if(isset($_POST['column']) AND isset($_POST['direction'])):
-            $tb_employe = sqlQuery('SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E INNER JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY ' . $_POST['column']  . ' '  . $_POST['direction'],$db);
+            $tb_employe = sqlQuery('SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY ' . $_POST['column']  . ' '  . $_POST['direction'] . ')temp',$db);
           elseif(isset($_POST['column'])):
-            $tb_employe = sqlQuery('SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E INNER JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY ' . $_POST['column']  . ' ASC',$db);
+            $tb_employe = sqlQuery('SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY ' . $_POST['column']  . ' ASC) temp',$db);
           else:
-            $tb_employe = sqlQuery('SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E INNER JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC',$db);
+            $tb_employe = sqlQuery('SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC) temp',$db);
           endif;
           printTable($tb_employe,$tb_columns);
 
-          $data_employe = sqlQuery("SELECT 'NB_PROJETS' as 'DATA', SUM(temp1.NB_PROJETS) as 'SOMME', AVG(temp1.NB_PROJETS) as 'MOYENNE', VARIANCE(temp1.NB_PROJETS) as 'VARIANCE', MIN(temp1.NB_PROJETS) as 'MINIMUM', MAX(temp1.NB_PROJETS) as 'MAXIMUM' FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E INNER JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO) temp1 UNION SELECT 'NB_HEURES' as 'DATA', SUM(temp2.NB_HEURES) as 'SOMME', AVG(temp2.NB_HEURES) as 'MOYENNE', VARIANCE(temp2.NB_HEURES) as 'VARIANCE', MIN(temp2.NB_HEURES) as 'MINIMUM', MAX(temp2.NB_HEURES) as 'MAXIMUM' FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E INNER JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO) temp2",$db);
+          $data_employe = sqlQuery("SELECT 'NB_PROJETS' as 'DATA', SUM(temp1.NB_PROJETS) as 'SOMME', AVG(temp1.NB_PROJETS) as 'MOYENNE', VARIANCE(temp1.NB_PROJETS) as 'VARIANCE', MIN(temp1.NB_PROJETS) as 'MINIMUM', MAX(temp1.NB_PROJETS) as 'MAXIMUM' FROM (SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC) temp) temp1 UNION SELECT 'NB_HEURES' as 'DATA', SUM(temp2.NB_HEURES) as 'SOMME', AVG(temp2.NB_HEURES) as 'MOYENNE', VARIANCE(temp2.NB_HEURES) as 'VARIANCE', MIN(temp2.NB_HEURES) as 'MINIMUM', MAX(temp2.NB_HEURES) as 'MAXIMUM' FROM (SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC) temp) temp2",$db);
           $data_columns = array(array(" "),array("SOMME"),array("MOYENNE"),array("VARIANCE"),array("MINIMUM"),array("MAXIMUM"));
         ?>
-        <br>
+        <br><br>
         <?php
           echo("Traitement des données des employés :");
           printTable($data_employe,$data_columns,$db);

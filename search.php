@@ -1,3 +1,5 @@
+<!-- © Group25 - Bases de Données 2022 : Projet 2-->
+
 <!DOCTYPE html>
 
 <html>
@@ -38,8 +40,9 @@
                     $tuples = sqlQuery('SELECT * FROM ' . $_POST["table"], $db);
                     $columns = sqlQuery("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" . $_POST["table"]. "' ORDER BY ORDINAL_POSITION", $db);
             ?>
-            <p>Filtre sur la table <?php echo($_POST["table"]);?> :</p>
             <form action='search.php' method = 'POST'>
+              <br><br>
+              <p>Filtre sur la table <?php echo($_POST["table"]);?> :</p>
               <input name="table" value="<?php echo($_POST["table"]);?>" type ="hidden">
             <?php
                   foreach($columns as $column):
@@ -49,14 +52,12 @@
                     <br><br>
                 <?php endforeach;?>
             <button type="submit">Filtrer</button>
+            <br><br>
             </form>
-            <br>
-            <div class="table-search">
-              <?php
-                    printTable(filterData($_POST,$db),$columns);
-                    endif;
-              ?>
-            </div>
+            <?php
+                  printTable(filterData($_POST,$db),$columns);
+                  endif;
+            ?>
           </div>
         </div>
     <?php

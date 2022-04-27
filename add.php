@@ -145,10 +145,8 @@
               
               elseif(isset($_POST["edit_projet"]) && isset($_POST["table"]) && $_POST["edited_projet"] != 'NULL'):
                 if($_POST["budget_projet"] != NULL):
-                  echo("UPDATE Projet SET BUDGET=" . $_POST["budget_projet"]  . " WHERE NOM='" . $_POST["edited_projet"] . "'");
                   sqlQuery("UPDATE Projet SET BUDGET=" . $_POST["budget_projet"]  . " WHERE NOM='" . $_POST["edited_projet"] . "'",$db);
                 else:
-                  echo("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_POST["edited_projet"] . "'");
                   sqlQuery("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_POST["edited_projet"] . "'",$db);
                 endif;
               endif;
@@ -164,10 +162,10 @@
               $departements = sqlQuery('SELECT NOM FROM Departement',$db);
               $fonctions = sqlQuery('SELECT NOM FROM Fonction',$db);
           ?>
-              <div class="justify-content-center">
-                <br>
-                <p>Modification des attributs d'un employé :</p>
+              <div class="d-flex justify-content-around">
                 <form action='add.php' method='POST'>
+                  <br><br>
+                  <p>Modification des attributs d'un employé :</p>
                   <input name="table" value="<?php echo($_POST["table"]);?>" type ="hidden">
                   <input name="edit_employe" value="TRUE" type="hidden">
                   <?php
@@ -201,10 +199,10 @@
             elseif(isset($_POST["table"]) && $_POST["table"]=='Projet'):
               $projets = sqlQuery('SELECT NOM FROM Projet',$db);
           ?>
-              <div class="justify-content-center">
-                <br>
-                <p>Modification du budget d'un projet :</p>
+              <div class="d-flex justify-content-around">                
                 <form action='add.php' method='POST'>
+                  <br><br>
+                  <p>Modification du budget d'un projet :</p>
                   <input name="table" value="<?php echo($_POST["table"]);?>" type ="hidden">
                   <input name="edit_projet" value="TRUE" type="hidden">
                   <?php

@@ -11,7 +11,7 @@ INSERT INTO Departement(NOM,BUDGET) VALUES ('MATH',NULL);
 INSERT INTO Departement(NOM,BUDGET) VALUES ('PHYS',120000);
 
 CREATE TABLE Employe(
-   NO              INTEGER  NOT NULL PRIMARY KEY 
+   NO              INTEGER UNSIGNED NOT NULL PRIMARY KEY 
   ,NOM             VARCHAR(64) NOT NULL
   ,NOM_DEPARTEMENT VARCHAR(64)
   ,NOM_FONCTION    VARCHAR(64)
@@ -24,9 +24,19 @@ INSERT INTO Employe(NO,NOM,NOM_DEPARTEMENT,NOM_FONCTION) VALUES (8823,'JANSSENS'
 INSERT INTO Employe(NO,NOM,NOM_DEPARTEMENT,NOM_FONCTION) VALUES (8829,'FLERACKER','PHYS','Assistant chercheur');
 INSERT INTO Employe(NO,NOM,NOM_DEPARTEMENT,NOM_FONCTION) VALUES (8845,'THIENPONDT',NULL,NULL);
 
+CREATE TABLE Evaluation(
+  PROJET        VARCHAR(64) NOT NULL PRIMARY KEY
+  ,EXPERT       INTEGER NOT NULL
+  ,COMMENTAIRES VARCHAR(2048)
+  ,AVIS         VARCHAR(64)
+);
+INSERT INTO Evaluation(PROJET,EXPERT,COMMENTAIRES,AVIS) VALUES ('DIDACT',7777,'Duis efficitur urna erat, vel convallis mauris aliquet non. Praesent aliquam leo vitae lorem mattis, nec egestas tellus convallis. Aenean vestibulum condimentum auctor. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nam congue leo elit, in cursus tortor scelerisque quis. Quisque dapibus nulla tellus, ac eleifend massa auctor non. Duis a rhoncus orci. Sed at fringilla arcu, vitae molestie purus. Nulla lacinia ante a urna tincidunt feugiat. Nullam risus tortor, mollis vel justo sit amet, dictum fermentum libero. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin fringilla, nunc tempor sollicitudin suscipit, quam ante maximus magna, eleifend elementum nunc odio quis massa.','SUCCES');
+INSERT INTO Evaluation(PROJET,EXPERT,COMMENTAIRES,AVIS) VALUES ('INF-SYST',8221,'Vestibulum eget leo et est rhoncus egestas. Ut ut justo a turpis maximus imperdiet. Curabitur pretium porttitor urna. Mauris iaculis sem felis, sed dignissim felis lacinia nec. Cras pharetra turpis dolor, nec volutpat purus fermentum a. Vivamus ut viverra sapien. Ut vestibulum eros quis commodo finibus. Proin quis purus justo. Suspendisse in ex ac velit facilisis euismod. Sed id magna ultricies, elementum dui vel, sodales purus.','SUCCES');
+INSERT INTO Evaluation(PROJET,EXPERT,COMMENTAIRES,AVIS) VALUES ('MED-STAT',7777,'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus quam ligula, lobortis id dignissim a, suscipit in lorem. Donec aliquam dui non ex sollicitudin, a scelerisque enim tincidunt. Cras mollis lacus eget libero rhoncus, non viverra nunc semper. Phasellus interdum dapibus ligula sed rhoncus. Donec velit libero, convallis at elit eu, varius mollis massa. Aenean aliquet maximus quam id rutrum. Ut auctor congue nisl, vel facilisis mauris fermentum sed. Proin cursus suscipit enim, id lobortis elit iaculis at. Aenean ligula erat, sodales at urna ac, volutpat sollicitudin massa. Maecenas vel quam id lorem elementum fermentum. Nam faucibus dolor elit, semper rutrum leo molestie vel. Curabitur at lectus vitae risus finibus tristique ornare eget nisl.','ECHEC');
+
 CREATE TABLE Fonction(
    NOM          VARCHAR(64) NOT NULL PRIMARY KEY
-  ,TAUX_HORAIRE INTEGER  NOT NULL
+  ,TAUX_HORAIRE INTEGER UNSIGNED NOT NULL
 );
 INSERT INTO Fonction(NOM,TAUX_HORAIRE) VALUES ('Assistant chercheur',75);
 INSERT INTO Fonction(NOM,TAUX_HORAIRE) VALUES ('Chercheur',100);
@@ -54,22 +64,21 @@ CREATE TABLE Projet(
   ,BUDGET      INTEGER
   ,COUT        INTEGER 
   ,DATE_FIN    DATE
-  ,AVIS_EXPERT VARCHAR(10)
 );
-INSERT INTO Projet(NOM,DEPARTEMENT,DATE_DEBUT,CHEF,BUDGET,COUT,DATE_FIN,AVIS_EXPERT) VALUES ('DIDACT','INF','2022-01-01',8467,3000,3100,'2022-02-28',NULL);
-INSERT INTO Projet(NOM,DEPARTEMENT,DATE_DEBUT,CHEF,BUDGET,COUT,DATE_FIN,AVIS_EXPERT) VALUES ('INF-SYST','INF','2021-09-01',8467,5500,5000,'2021-12-31',NULL);
-INSERT INTO Projet(NOM,DEPARTEMENT,DATE_DEBUT,CHEF,BUDGET,COUT,DATE_FIN,AVIS_EXPERT) VALUES ('MED-STAT','MATH','2022-01-01',8105,2000,1000,'2022-02-28',NULL);
-INSERT INTO Projet(NOM,DEPARTEMENT,DATE_DEBUT,CHEF,BUDGET,COUT,DATE_FIN,AVIS_EXPERT) VALUES ('STOCH','PHYS','2022-03-01',8105,4500,NULL,NULL,NULL);
+INSERT INTO Projet(NOM,DEPARTEMENT,DATE_DEBUT,CHEF,BUDGET,COUT,DATE_FIN) VALUES ('DIDACT','INF','2022-01-01',8467,3000,3100,'2022-02-28');
+INSERT INTO Projet(NOM,DEPARTEMENT,DATE_DEBUT,CHEF,BUDGET,COUT,DATE_FIN) VALUES ('INF-SYST','INF','2021-09-01',8467,5500,5000,'2021-12-31');
+INSERT INTO Projet(NOM,DEPARTEMENT,DATE_DEBUT,CHEF,BUDGET,COUT,DATE_FIN) VALUES ('MED-STAT','MATH','2022-01-01',8105,2000,1000,'2022-02-28');
+INSERT INTO Projet(NOM,DEPARTEMENT,DATE_DEBUT,CHEF,BUDGET,COUT,DATE_FIN) VALUES ('STOCH','PHYS','2022-03-01',8105,4500,NULL,NULL);
 
 CREATE TABLE Rapport(
    ID      INT NOT NULL AUTO_INCREMENT PRIMARY KEY
-  ,EXPERT INTEGER  NOT NULL 
+  ,EMPLOYE INTEGER  NOT NULL 
   ,PROJET  VARCHAR(64) NOT NULL
   ,TITRE   VARCHAR(64) NOT NULL
 );
-INSERT INTO Rapport(EXPERT,PROJET,TITRE) VALUES (8221,'MED-STAT','MED-STAT Experimental Results');
-INSERT INTO Rapport(EXPERT,PROJET,TITRE) VALUES (8467,'MED-STAT','MED-STAT Development Report');
-INSERT INTO Rapport(EXPERT,PROJET,TITRE) VALUES (8467,'STOCH','STOCH: Implementation Report');
+INSERT INTO Rapport(EMPLOYE,PROJET,TITRE) VALUES (8221,'MED-STAT','MED-STAT Experimental Results');
+INSERT INTO Rapport(EMPLOYE,PROJET,TITRE) VALUES (8467,'MED-STAT','MED-STAT Development Report');
+INSERT INTO Rapport(EMPLOYE,PROJET,TITRE) VALUES (8467,'STOCH','STOCH: Implementation Report');
 
 CREATE TABLE Tache(
    ID      INT NOT NULL AUTO_INCREMENT PRIMARY KEY

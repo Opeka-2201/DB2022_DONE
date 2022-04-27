@@ -22,8 +22,9 @@
         $roles_query = "SELECT * FROM (SELECT E.NO, E.NOM, E.NOM_FONCTION";
         foreach($projects as $project):
           $roles_query = $roles_query . ", CONCAT(IF(E.NO IN (SELECT P.CHEF FROM Projet P WHERE P.NOM = '" . $project[0] . "'), 'CHEF ',''),";
-          $roles_query = $roles_query . "IF(E.NO IN (SELECT R.EXPERT FROM Rapport R WHERE R.PROJET = '" . $project[0] . "'),'EXPERT ',''),";
-          $roles_query = $roles_query . "IF(E.NO IN (SELECT T.EMPLOYE FROM Tache T WHERE T.PROJET = '" . $project[0] . "'),'EMPLOYE ',''))";
+          $roles_query = $roles_query . "IF(E.NO IN (SELECT E.EXPERT FROM Evaluation E WHERE E.PROJET = '" . $project[0] . "'),'EXPERT ',''),";
+          $roles_query = $roles_query . "IF(E.NO IN (SELECT R.EMPLOYE FROM Rapport R WHERE R.PROJET = '" . $project[0] . "'),'EMPLOYE_RAPPORT ',''),";
+          $roles_query = $roles_query . "IF(E.NO IN (SELECT T.EMPLOYE FROM Tache T WHERE T.PROJET = '" . $project[0] . "'),'EMPLOYE_TACHE ',''))";
           $roles_query = $roles_query . " as '" . $project[0] . "'";
           $columns->append(array($project[0]));
         endforeach;
@@ -43,7 +44,8 @@
           <ul>
             <li>CHEF signifie que l'employé est chef du projet correspondant</li>
             <li>EXPERT signifie que l'employé a réalisé un rapport lié au projet correspondant</li>
-            <li>EMPLOYE signifie que l'employé à réalisé une tâche liée au projet correspondant</li>
+            <li>EMPLOYE_TACHE signifie que l'employé à réalisé une tâche liée au projet correspondant</li>
+            <li>EMPLOYE_RAPPORT signifie que l'employé à réalisé un rapport liée au projet correspondant</li>
           </ul>
         </div>
     <?php
