@@ -72,7 +72,7 @@
                 endforeach;
                 $end_date = sqlQuery('SELECT DATE(NOW())',$db);
                 sqlQuery('UPDATE Projet SET COUT=' . $total_cost . ', DATE_FIN="' . $end_date[0][0]  .'" WHERE NOM="' . $_POST["projet"] . '"', $db);
-                if($_POST["eval?"] == 'yes'):
+                if(isset($_POST["eval?"]) && $_POST["eval?"] == 'yes'):
                   sqlQuery('INSERT INTO Evaluation (PROJET,EXPERT,COMMENTAIRES,AVIS) VALUES ("' . $_POST["projet"]  . '","' . $_POST["expert"] . '","' . $_POST["commentaires"] . '","' . $_POST["avis_expert"] . '")',$db);
                 endif;
               elseif(isset($_POST["projet"]) && $_POST["projet"] != 'NULL' && isset($_POST["edit_opinion"])):
@@ -122,7 +122,7 @@
                   endif;
 
                   echo('<br><br><p>Liste des tâches du projet ' . $_POST["projet"] . ' : </p>');
-                  $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_POST["projet"] . "'", $db);
+                  $tasks = sqlQuery('SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, temp.TAUX_HORAIRE, temp.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN (SELECT * FROM Fonction UNION SELECT " " as NOM, 0 as TAUX_HORAIRE) temp ON COALESCE(Employe.NOM_FONCTION," ") = temp.NOM WHERE Tache.PROJET = "' . $_POST["projet"] . '"', $db);
                   $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
                   printTable($tasks, $columns);
 
@@ -153,7 +153,7 @@
                   printTable($project_details, $columns);
 
                   echo('<br><br><p>Liste des tâches du projet ' . $_POST["projet"] . ' : </p>');
-                  $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_POST["projet"] . "'", $db);
+                  $tasks = sqlQuery('SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, temp.TAUX_HORAIRE, temp.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN (SELECT * FROM Fonction UNION SELECT " " as NOM, 0 as TAUX_HORAIRE) temp ON COALESCE(Employe.NOM_FONCTION," ") = temp.NOM WHERE Tache.PROJET = "' . $_POST["projet"] . '"', $db);
                   $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
                   printTable($tasks, $columns);
                   

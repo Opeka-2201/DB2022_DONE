@@ -44,12 +44,12 @@
           ?>
             <p>Tâches relatives au projet <?php echo($_POST["projet"]);?> :</p>
           <?php
-            $tasks = sqlQuery("SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = '" . $_POST["projet"] . "'", $db);
+            $tasks = sqlQuery('SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, temp.TAUX_HORAIRE, temp.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN (SELECT * FROM Fonction UNION SELECT " " as NOM, 0 as TAUX_HORAIRE) temp ON COALESCE(Employe.NOM_FONCTION," ") = temp.NOM WHERE Tache.PROJET = "' . $_POST["projet"] . '"', $db);
             $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
             printTable($tasks, $columns);
 
           else:
-            $tasks = sqlQuery('SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, Fonction.TAUX_HORAIRE, Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM', $db);
+            $tasks = sqlQuery('SELECT Tache.ID, Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, temp.TAUX_HORAIRE, temp.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN (SELECT * FROM Fonction UNION SELECT " " as NOM, 0 as TAUX_HORAIRE) temp ON COALESCE(Employe.NOM_FONCTION," ") = temp.NOM', $db);
             $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
             printTable($tasks, $columns);
           endif;
