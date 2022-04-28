@@ -160,15 +160,16 @@
                   $columns = array(array("ID"),array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
                   printTable($tasks, $columns);
                   
-                  $task_ids = sqlQuery('SELECT ID FROM Tache WHERE Tache.PROJET ="' . $_POST["projet"] . '"',$db);
-                  $employes_not_in_project = sqlQuery("SELECT NO FROM Employe WHERE Employe.NO NOT IN (SELECT EMPLOYE FROM Tache WHERE Tache.PROJET='" . $_POST["projet"]  . "')", $db);
+                  $task_ids = sqlQuery('SELECT T.ID FROM Tache T WHERE T.ID NOT IN (SELECT A.ID as ID2 FROM Tache A INNER JOIN Rapport R ON (A.EMPLOYE = R.EMPLOYE) WHERE A.PROJET="' . $_POST["projet"]  . '" AND R.PROJET="' . $_POST["projet"]  . '") AND T.PROJET="' . $_POST["projet"]  . '"',$db);
+                  $employes_not_in_project = sqlQuery("SELECT NO FROM Employe WHERE Employe.NO NOT IN (SELECT EMPLOYE FROM Tache WHERE Tache.PROJET='" . $_POST["projet"]  . "') AND (Employe.NOM_DEPARTEMENT IS NOT NULL OR Employe.NOM_FONCTION IS NOT NULL)", $db);
                   ?>
                   <div class="d-flex justify-content-around">
+                    <?php if(!empty($task_ids)):?>
                     <div>
-                      <br><br><p>Soumission des heures pour les tâches du projet <?php echo($_POST["projet"]);?> : </p>
+                      <br><br><p>Soumission des heures pour le projet <?php echo($_POST["projet"]);?> : </p>
                       <form action ='tasks_management.php' method = 'POST'>
                         <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
-                        <?php echo("ID Tâche : ");
+                        <?php echo("ID Tâche sans rapport : ");
                           echo("<select name='task_id'>");
                           echo("<option value=NULL>---</option>");
                           foreach($task_ids as $task_id):
@@ -185,7 +186,8 @@
                         <br><br>
                       </form>
                     </div>
-                    <?php if(!empty($employes_not_in_project)): ?>
+                    <?php endif;
+                    if(!empty($employes_not_in_project)): ?>
                       <div>
                         <br><br><p>Ajout de tâches pour le projet  <?php echo($_POST["projet"]);?> : </p>
                         <form action='tasks_management.php' method='POST'>
@@ -205,49 +207,66 @@
                           <button type='submit'>Créer tâche</button>
                         </form>
                       </div>
-                    <?php endif; ?>
-
-                    <div>
-                      <br><br><p>Formulaire de fin de projet <?php echo($_POST["projet"]);?> : </p>
-                      <form action='tasks_management.php' method='POST'>
-                        <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
-                        <?php echo("Créer évalutation ? : "); ?>
-                        <input type='checkbox' value='yes' name='eval?' id ='eval?'>
-                        <br><br>
-                        <?php echo("Expert : ");?>
-                        <select name="expert" id="expert">
-                            <?php
-                              $employes = sqlQuery('SELECT * FROM Employe',$db);
-                              foreach ($employes as $employe): 
-                            ?>
-                              <option name="expert" value="<?php echo($employe["NO"])?>"><?php echo($employe["NO"])?> </option>
-                              <?php endforeach;?>
-                        </select>
-                        <?php echo("<br><br>Commentaires : ");?>
-                        <input type='text' id='commentaires' name='commentaires'>
-                        <br><br>
-                        <?php echo("Avis expert : "); ?>
-                        <select name='avis_expert'>
-                          <option value=NULL>---</option>
-                          <option value='SUCCES'>SUCCES</option>
-                          <option value='ECHEC'>ECHEC</option>
-                        </select>
-                        <br><br>
-                        <button type='submit'>Mettre fin au projet</button>
-                      </form>
-                    </div>
+                    <?php endif;
+                    $budget_project = sqlQuery('SELECT BUDGET FROM Projet WHERE Projet.NOM="' . $_POST["projet"]  . '"',$db);
+                    if($budget_project[0][0] !=NULL):
+                    ?>
+                      <div>
+                        <br><br><p>Formulaire de fin de projet <?php echo($_POST["projet"]);?> : </p>
+                        <form action='tasks_management.php' method='POST'>
+                          <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
+                          <?php echo("Créer évalutation ? : "); ?>
+                          <input type='checkbox' value='yes' name='eval?' id ='eval?'>
+                          <br><br>
+                          <?php echo("Expert : ");?>
+                          <select name="expert" id="expert">
+                              <?php
+                                $employes = sqlQuery('SELECT * FROM Employe',$db);
+                                foreach ($employes as $employe): 
+                              ?>
+                                <option name="expert" value="<?php echo($employe["NO"])?>"><?php echo($employe["NO"])?> </option>
+                                <?php endforeach;?>
+                          </select>
+                          <?php echo("<br><br>Commentaires : ");?>
+                          <input type='text' id='commentaires' name='commentaires'>
+                          <br><br>
+                          <?php echo("Avis expert : "); ?>
+                          <select name='avis_expert'>
+                            <option value=NULL>---</option>
+                            <option value='SUCCES'>SUCCES</option>
+                            <option value='ECHEC'>ECHEC</option>
+                          </select>
+                          <br><br>
+                          <button type='submit'>Mettre fin au projet</button>
+                        </form>
+                      </div>
+                    
+                    <?php
+                      else:
+                        ?>
+                        <div class='text-center'><br><br>
+                          <p>Veuillez spécifier la valeur du champ budget du projet pour pouvoir y mettre fin</p>
+                          <form action='add.php' method='POST'>
+                            <input name="table" value="Projet" type="hidden">
+                            <br>
+                            <button type='submit'>Accéder à la modification du budget</button>
+                          </form>
+                        </div>
+                        <?php
+                      endif;
+                    ?>
                   </div>
                   <?php
                 endif;
-                $tasks_in_project_with_no_report = sqlQuery('SELECT T.ID FROM Tache T WHERE T.ID NOT IN (SELECT A.ID as ID2 FROM Tache A INNER JOIN Rapport R ON (A.EMPLOYE = R.EMPLOYE) WHERE A.PROJET="' . $_POST["projet"]  . '" AND R.PROJET="' . $_POST["projet"]  . '") AND T.PROJET="' . $_POST["projet"]  . '"',$db);
+                $tasks_in_project_with_no_report = sqlQuery('SELECT T.ID FROM Tache T WHERE T.ID NOT IN (SELECT A.ID as ID2 FROM Tache A INNER JOIN Rapport R ON (A.EMPLOYE = R.EMPLOYE) WHERE A.PROJET="' . $_POST["projet"]  . '" AND R.PROJET="' . $_POST["projet"]  . '") AND T.PROJET="' . $_POST["projet"]  . '" AND T.NB_HEURES IS NOT NULL',$db);
                 
                 if(!empty($tasks_in_project_with_no_report)):
                 ?>
                   <div class="d-flex justify-content-around">
                     <form action='tasks_management.php' method='POST'>
-                      <p>Création d'un rapport pour les tâches du projet <?php echo($_POST["projet"]); ?> : </p>
+                      <p>Création d'un rapport pour les tâches du projet <?php echo($_POST["projet"]); ?>: <br>(Attention met fin à la tâche plus d'ajout d'heures possible) </p>
                       <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
-                      <?php echo('ID des tâches sans rapport :');?>
+                      <?php echo('ID des tâches sans rapport avec heures fixées :');?>
                       <select name='report_task'>
                         <?php
                           foreach($tasks_in_project_with_no_report as $task_in_project_with_no_report):
@@ -259,7 +278,7 @@
                       <label for="report_title">Titre du rapport : </label>
                       <input type="text" id="report_title" name="report_title">
                       <br><br>
-                      <label for="report_keywords">Mots clés du rapport (à séparer par un espace) : </label>
+                      <label for="report_keywords">Mots clés du rapport (à séparer par un espace, minimum 1) : </label>
                       <input type="text" id="report_keywords" name="report_keywords">
                       <br><br>
                       <button type='submit'>Créer rapport</button>

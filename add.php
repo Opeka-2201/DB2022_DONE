@@ -197,16 +197,16 @@
               </div>
           <?php
             elseif(isset($_POST["table"]) && $_POST["table"]=='Projet'):
-              $projets = sqlQuery('SELECT NOM FROM Projet',$db);
+              $projets = sqlQuery('SELECT NOM FROM Projet WHERE DATE_FIN IS NULL',$db);
           ?>
               <div class="d-flex justify-content-around">                
                 <form action='add.php' method='POST'>
                   <br><br>
-                  <p>Modification du budget d'un projet :</p>
+                  <p>Modification du budget d'un projet non terminé :</p>
                   <input name="table" value="<?php echo($_POST["table"]);?>" type ="hidden">
                   <input name="edit_projet" value="TRUE" type="hidden">
                   <?php
-                    echo("PROJET :");
+                    echo("Projets non terminés :");
                     echo("<select name='edited_projet'>");
                     echo("<option value=NULL>---</option>");
                     foreach($projets as $projet):
@@ -215,7 +215,7 @@
                     echo("</select>");
                   ?>
                   <br><br>
-                  <label for="budget_projet">Nouveau budget :</label>
+                  <label for="budget_projet">Nouveau budget (Laisser vide pour NULL) :</label>
                   <input type="text" id="budget_projet" name="budget_projet">
                   <br><br>
                   <button type='submit'>Mettre à jour le budget</button>
