@@ -30,7 +30,7 @@
     <div class="px-4 py-5 my-5">
       <form class="form-signin text-center" action="login.php" method="POST">
         <img class="mb-4" src="./img/uliege.png" alt="" width="200" height="auto">
-        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+        <h1 class="h3 mb-3 fw-normal">Identification</h1>
         <?php 
         if(isset($message)) :
           echo('<div class="error-message" role="alert">');
@@ -40,11 +40,11 @@
         ?>
         <div class="form-floating">
           <input name="username" type="text" class="form-control" id="floatingInput" placeholder="group00">
-          <label for="floatingInput">ID</label>
+          <label for="floatingInput">Identifiant</label>
         </div>
         <div class="form-floating">
           <input name="pwd" type="password" class="form-control" id="floatingPassword" placeholder="Password">
-          <label for="floatingPassword">Password</label>
+          <label for="floatingPassword">Mot de passe</label>
         </div>
         <button class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
         <p class="mt-5 mb-3 text-muted">© Group25 - 2022</p>

@@ -7,7 +7,7 @@
     </a>
 
     <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-      <li><a href="./home.php" class="nav-link px-2 link-dark">Acceuil</a></li>
+      <li><a href="./home.php" class="nav-link px-2 link-dark">Accueil</a></li>
       <li><a href="./search.php" class="nav-link px-2 link-dark">Tri</a></li>
       <li><a href="./tasks_project.php" class="nav-link px-2 link-dark">Tâches/Projet</a></li>
       <li><a href="./add.php" class="nav-link px-2 link-dark">Ajout</a></li>
@@ -18,7 +18,7 @@
     </ul>
 
     <div class="col-md-3 text-end">
-      <a href="./logout.php"><button type="button" class="btn btn-outline-primary me-2">Disconnect</button></a>
+      <a href="./logout.php"><button type="button" class="btn btn-outline-primary me-2">Déconnection</button></a>
     </div>
   </header>
 </div>

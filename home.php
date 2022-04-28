@@ -28,8 +28,8 @@
               <ul>
                 <li>Tri : permet d'afficher une table désirée de la base de données et d'effectuer un tri sur les différentes colonnes de celle-ci.</li>
                 <li>Tâches/Projet : permet d'afficher les tâche de tous les projets et des les filtrer selon un projet spécifique. Affiche également le coût des tâches grâce au taux horaire de la fonction de l'employé réalisant la tâche.</li>
-                <li>Ajout : permet d'ajouter des projets, des employés et des fonctions via des formulaires. Permet également de modifier le département et la fonction d'un employé.</li>
-                <li>Tâches : permet d'accéder à la création des tâches et l'imputation des heures de travail sur celles-ci et calculer le budget grâce au taux horaire des employés. Vous pourrez également décider de mettre un terme à un projet.</li>
+                <li>Ajout : permet d'ajouter des projets, des employés et des fonctions via des formulaires. Permet également de modifier le département et la fonction d'un employé ainsi que le budget d'un projet.</li>
+                <li>Tâches : permet d'accéder à la création des tâches et l'imputation des heures de travail sur celles-ci et calculer le budget grâce au taux horaire des employés. Vous pourrez également décider de mettre un terme à un projet avec une évaluation ou non. Vous pourrez également décider de publier des rapports et d'en choisir les mots clés pour les tâches d'un projet n'ayant pas encore eu de rapport. Si une évaluation a été publiée pour le projet permet d'en modifier les commentaires et l'avis de l'expert.</li>
                 <li>Employé/projet : Permet d'afficher la liste des employés ayant participé à tous les projet, qu'ils soient employés, chefs ou expert et affiche leur responsabilité dans les différents projets.</li>
                 <li>Projets : Tableau de bord concernant les projets et regroupant toutes les informations liées à ceux-ci.</li>
                 <li>Employés : Tableau de bord concernant les employés et regroupant toutes les informations liées à ceux-ci. </li>

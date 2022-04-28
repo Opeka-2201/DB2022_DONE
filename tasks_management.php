@@ -77,9 +77,9 @@
                 endif;
               elseif(isset($_POST["projet"]) && $_POST["projet"] != 'NULL' && isset($_POST["edit_opinion"])):
                 if($_POST["edit_opinion"] == 'NULL'):
-                  sqlQuery('UPDATE Evaluation SET AVIS=' . $_POST["edit_opinion"] . ' WHERE PROJET="' . $_POST["projet"] .'"' ,$db);
+                  sqlQuery('UPDATE Evaluation SET AVIS=' . $_POST["edit_opinion"] . ',COMMENTAIRES="' . $_POST["report_comments"] .  '" WHERE PROJET="' . $_POST["projet"] .'"' ,$db);
                 else:
-                  sqlQuery('UPDATE Evaluation SET AVIS="' . $_POST["edit_opinion"] . '" WHERE PROJET="' . $_POST["projet"] .'"' ,$db);
+                  sqlQuery('UPDATE Evaluation SET AVIS="' . $_POST["edit_opinion"] . '" ,COMMENTAIRES="' . $_POST["report_comments"] .  '" WHERE PROJET="' . $_POST["projet"] .'"' ,$db);
                 endif;
               elseif(isset($_POST["projet"]) && $_POST["projet"] != 'NULL' && isset($_POST["report_task"]) && isset($_POST["report_title"]) && isset($_POST["report_keywords"])):
                 if($_POST["report_title"]==NULL || $_POST["report_keywords"]==NULL):
@@ -131,10 +131,13 @@
                   <div class="d-flex justify-content-around">
                     <div>
                       <?php if($check_eval[0][0]):?>
-                      <p>Modification de l'avis de l'expert pour le projet <?php echo($_POST["projet"]);?> :</p>
+                      <p>Modification de l'évaluation pour le projet <?php echo($_POST["projet"]);?> :</p>
                       
                       <form action='tasks_management.php' method='POST'>
                         <input name="projet" value="<?php echo($_POST["projet"]);?>" type ="hidden">
+                        <label for="report_comments">Commentaires : </label>
+                        <input type="text" id="report_comments" name="report_comments">
+                        <br><br>
                         <?php echo("Avis de l'expert :"); ?>
                         <select name='edit_opinion'>
                           <option value=NULL>---</option>
@@ -142,7 +145,7 @@
                           <option value='ECHEC'>ECHEC</option>
                         </select>
                         <br><br>
-                        <button type='submit'>Modifier l'avis d'expert</button>
+                        <button type='submit'>Modifier l'évaluation</button>
                       </form>
                     </div>
                   <?php endif;
