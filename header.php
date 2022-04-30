@@ -18,7 +18,7 @@
     </ul>
 
     <div class="col-md-3 text-end">
-      <a href="./logout.php"><button type="button" class="btn btn-outline-primary me-2">Déconnection</button></a>
+      <a href="./logout.php"><button type="button" class="btn btn-outline-primary me-2">Déconnexion</button></a>
     </div>
   </header>
 </div>
