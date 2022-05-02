@@ -92,7 +92,7 @@
             else:
               sqlQuery('INSERT INTO Rapport (EMPLOYE,PROJET,TITRE) VALUES (' . $_POST["employe_task"] . ',"' . $_POST["projet"]  . '","' . $_POST["report_title"]  . '")',$db);
 
-              $keywords = explode(" ",$_POST["report_keywords"]);
+              $keywords = explode(",",$_POST["report_keywords"]);
               foreach($keywords as $keyword):
                 sqlQuery('INSERT INTO Mots_Cles (RAPPORT,MOT_CLE) VALUES ("' . $_POST["report_title"]  . '","' . $keyword  . '")',$db);
               endforeach;
@@ -265,7 +265,7 @@
                     <label for="report_title">Titre du rapport : </label>
                     <input type="text" id="report_title" name="report_title">
                     <br><br>
-                    <label for="report_keywords">Mots clés du rapport (à séparer par un espace, minimum 1) : </label>
+                    <label for="report_keywords">Mots clés du rapport (à séparer par une virgule, minimum 1) : </label>
                     <input type="text" id="report_keywords" name="report_keywords">
                     <br><br>
                     <button type='submit'>Créer rapport</button>
