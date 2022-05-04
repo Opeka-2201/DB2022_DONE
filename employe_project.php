@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="index.css">
   </head>
+
   <body>
     <?php
       session_start();
@@ -28,25 +29,45 @@
           $roles_query = $roles_query . " as '" . $project[0] . "'";
           $columns->append(array($project[0]));
         endforeach;
-        $roles_query = $roles_query . " FROM Employe E) temp WHERE ";
-        foreach($projects as $project):
-          $roles_query = $roles_query . "`" . $project[0] . "`!= ' ' AND ";
-        endforeach;
-        $roles_query = $roles_query . "1";
+        $roles_query = $roles_query . " FROM Employe E) temp";
+
+        if(isset($_POST["mode"]) && $_POST["mode"] == 'full'):
+        ?>
+          <br>
+          <form class="d-flex justify-content-center" action="employe_project.php" method='POST'>
+            <button type="submit">Passer au mode restreint</button>
+          </form>
+        <?php
+        else:
+        ?>
+          <br>
+          <form class="d-flex justify-content-center" action="employe_project.php" method="POST">
+            <input name="mode" value="full" type="hidden">
+            <button type='submit'>Passer au mode complet</button>
+          </form>
+        <?php
+          $roles_query = $roles_query . " WHERE ";
+          foreach($projects as $project):
+            $roles_query = $roles_query . "`" . $project[0] . "`!= ' ' AND ";
+          endforeach;
+          $roles_query = $roles_query . "1";
+        endif;
+
         $roles_table = sqlQuery($roles_query,$db);
     ?>
         <div class="px-4 py-5 my-5">
           <div class="justify-content-center">
             <?php printTable($roles_table,$columns); ?>
           </div>
-        </div>
-        <div style="margin-left:30px">
-          <ul>
-            <li>CHEF signifie que l'employé est chef du projet correspondant</li>
-            <li>EXPERT signifie que l'employé a réalisé un rapport lié au projet correspondant</li>
-            <li>EMPLOYE_TACHE signifie que l'employé à réalisé une tâche liée au projet correspondant</li>
-            <li>EMPLOYE_RAPPORT signifie que l'employé à réalisé un rapport liée au projet correspondant</li>
-          </ul>
+          <br>
+          <div style="margin-left:30px">
+            <ul>
+              <li>CHEF signifie que l'employé est chef du projet correspondant</li>
+              <li>EXPERT signifie que l'employé a réalisé un rapport lié au projet correspondant</li>
+              <li>EMPLOYE_TACHE signifie que l'employé à réalisé une tâche liée au projet correspondant</li>
+              <li>EMPLOYE_RAPPORT signifie que l'employé à réalisé un rapport lié à sa tâche dans le projet correspondant</li>
+            </ul>
+          </div>
         </div>
     <?php
       else:
