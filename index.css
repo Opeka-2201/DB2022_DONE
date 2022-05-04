@@ -2,7 +2,7 @@
 
 body {
   padding-top: 40px;
-  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgba(60, 226, 113, 0.432))) fixed;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgba(246, 156, 0, 0.499))) fixed;
 }
 
 .form-signin .checkbox {
