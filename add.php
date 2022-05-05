@@ -21,7 +21,7 @@
         <div class="px-4 py-5 my-5">
           <div class="d-flex justify-content-center">
             <p>Choisissez la table à laquelle ajouter des données : </p>
-            <form action ='/add.php' method = 'POST'>
+            <form action ='add.php' method = 'POST'>
               <select name="table" id="table-select">
                   <option value="NULL">---</option>
                   <option value="Projet">Projet</option>
@@ -158,9 +158,9 @@
           
           <?php
             if(isset($_POST["table"]) && $_POST["table"]=='Employe'):
-              $employes = sqlQuery('SELECT NO FROM Employe',$db);
-              $departements = sqlQuery('SELECT NOM FROM Departement',$db);
-              $fonctions = sqlQuery('SELECT NOM FROM Fonction',$db);
+              $employes = sqlQuery('SELECT NO FROM Employe ORDER BY NO',$db);
+              $departements = sqlQuery('SELECT NOM FROM Departement ORDER BY NOM',$db);
+              $fonctions = sqlQuery('SELECT NOM FROM Fonction ORDER BY NOM',$db);
           ?>
               <div class="d-flex justify-content-around">
                 <form action='add.php' method='POST'>

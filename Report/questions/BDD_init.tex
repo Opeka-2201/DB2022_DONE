@@ -1,0 +1,12 @@
+Afin d'initialiser correctement la base de données il suffit de se connecter en SSH aux machines de l'université et de lancer MySQL depuis le dossier WWW de 
+notre compte sur ces machines :
+
+\begin{verbatim}
+  $ ssh s191230@ms801.montefiore.ulg.ac.be
+  $ cd WWW
+  $ mysql -h ms8db -u group25 -p
+  Enter password: 3uCTA8L2ID
+  mysql> source ./script.sql
+\end{verbatim}
+
+Ce script se charge de charger toutes les tables de notre base de données.

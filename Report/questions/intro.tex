@@ -1,0 +1,34 @@
+Pour ce projet il nous a été demandé de créer un site web de gestion de base de données utilisant 
+PHP et MySQL grâce à l'API PDO. Le modèle relationnel qui nous été demandé d'implémenter est le suivant :
+\\
+\begin{itemize}
+  \item DEPARTEMENT(\underline{NOM},BUDGET)
+  \item EMPLOYE(\underline{NO},NOM,NOM\_DEPARTEMENT,NOM\_FONCTION)
+  \begin{itemize}
+    \item NOM\_DEPARTEMENT $\rightarrow$ NOM de DEPARTEMENT, NOM\_FONCTION $\rightarrow$ NOM de FONCTION
+  \end{itemize}
+  \item EVALUATION(\underline{PROJET},EXPERT,COMMENTAIRES,AVIS)
+  \begin{itemize}
+    \item PROJET $\rightarrow$ NOM de PROJET, EXPERT $\rightarrow$ NO de EMPLOYE
+  \end{itemize}
+  \item FONCTION(\underline{NOM},TAUX\_HORAIRE)
+  \item MOTS\_CLES(\underline{RAPPORT},\underline{MOT\_CLE})
+  \begin{itemize}
+    \item RAPPORT $\rightarrow$ TITRE de RAPPORT
+  \end{itemize}
+  \item PROJET(\underline{NOM},DEPARTEMENT,DATE\_DEBUT,CHEF,BUDGET,COUT,DATE\_FIN)
+  \begin{itemize}
+    \item DEPARTEMENT $\rightarrow$ NOM de DEPARTEMENT, CHEF $\rightarrow$ NO de EMPLOYE
+  \end{itemize}
+  \item RAPPORT(EMPLOYE,PROJET,\underline{TITRE})
+  \begin{itemize}
+    \item EMPLOYE/PROJET $\rightarrow$ EMPLOYE/PROJET de TACHE
+  \end{itemize}
+  \item TACHE(\underline{EMPLOYE},\underline{PROJET},NOMBRE\_HEURES)
+  \begin{itemize}
+    \item EMPLOYE $\rightarrow$ NO de EMPLOYE, PROJET $\rightarrow$ NOM de PROJET
+  \end{itemize}
+\end{itemize}
+Dans ce rapport nous allons décrire notre site web et les requêtes SQL que nous avons du réaliser pour accéder aux bons éléments de notre base de données.
+
+

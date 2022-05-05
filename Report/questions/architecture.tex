@@ -1,0 +1,16 @@
+Pour accéder à notre site web, il faut d'abord se connecter via la page de login vers laquelle vous êtes redirigé directement si l'utilisateur n'est pas connecté et ce grâce 
+aux variables \verb|$_SESSION| de PHP.
+\\\\
+Une fois connecté, vous accédez à la page d'acceuil qui décrit simplement les différents onglets du site web et leurs fonctions. Ces différents onglets sont accessibles via la barre de navigation supérieure.
+\\\\
+Voici une courte description des différents onglets :
+
+\begin{itemize}
+  \item Tri : Cet onglet permet de naviguer dans les différentes tables de la base de données et d'effectuer des tris dans celles-ci afin d'effectuer des recherches précises.
+  \item Tâches/Projet : Cet onglet permet d'afficher les tâches relatives aux différents projets.
+  \item Ajout : Cet onglet permet d'ajouter des éléments dans les tables Employe,Projet et Fonction. Vous pourrez également modifier les attributs des employés et les budgets des projets non terminés.
+  \item Tâches : Dans cet onglet vous pouvez afficher les détails de chaque projet et les tâches relatives à ceux-ci. Si le projet est terminé vous pouvez modifier l'avis de l'évaluation de l'expert si il y en a une. Si le projet n'est pas terminé, vous pouvez décider de créer des nouvelles tâches à des employés disposant de fonction et d'un département, d'ajouter des heures à des tâches non terminées (sans rapport) et de mettre fin au projet (calcul du coût, création de la date de fin, évaluation éventuelle d'un expert) si le budget de celui-ci a été enregistré (modification possible dans l'onglet ajout).
+  \item Employé/Projet : Cet onglet permet d'afficher les employés qui ont participé à tous les projets, que ce soit en tant que chef, employé ou expert. Vous pouvez également passer au mode complet qui affiche les responsabilités de tous les employés dans tous les projets.
+  \item Projets : Tableau de bord des différents projets affichant leur statut (cfr. partie 1 du projet) et leurs différents attributs.
+  \item Employés : Tableau des bord des employés permettant de montrer le nombre de projets réalisés par chaque employé et le nombre d'heures des tâches qu'ils ont effectué. Un tableau montre également des statistiques relatives aux données citées plus haut.
+\end{itemize}
