@@ -44,12 +44,12 @@
           ?>
             <p>Tâches relatives au projet <?php echo($_POST["projet"]);?> :</p>
           <?php
-            $tasks = sqlQuery('SELECT Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, temp.TAUX_HORAIRE, temp.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN (SELECT * FROM Fonction UNION SELECT " " as NOM, 0 as TAUX_HORAIRE) temp ON Employe.NOM_FONCTION = temp.NOM WHERE Tache.PROJET = "' . $_POST["projet"] . '"', $db);
+            $tasks = sqlQuery('SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES FROM Employe E INNER JOIN Tache T ON T.EMPLOYE = E.NO INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM WHERE T.PROJET = "' . $_POST["projet"] . '"', $db);
             $columns = array(array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
             printTable($tasks, $columns);
 
           else:
-            $tasks = sqlQuery('SELECT Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, temp.TAUX_HORAIRE, temp.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN (SELECT * FROM Fonction UNION SELECT " " as NOM, 0 as TAUX_HORAIRE) temp ON Employe.NOM_FONCTION = temp.NOM', $db);
+            $tasks = sqlQuery('SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES FROM Employe E INNER JOIN Tache T ON T.EMPLOYE = E.NO INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM', $db);
             $columns = array(array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
             printTable($tasks, $columns);
           endif;

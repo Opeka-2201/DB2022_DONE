@@ -60,15 +60,11 @@
               </div>
             <?php endif;
           
-          // Mise à fin d'une tâche (+ création eventuelle d'une évaluation)
+          // Mise à fin d'un projet (+ création eventuelle d'une évaluation)
           elseif(isset($_POST["projet"]) && $_POST["projet"] != 'NULL' && isset($_POST["expert"]) && isset($_POST["commentaires"]) && isset($_POST["avis_expert"])):
-                $total_cost = 0;
-                $tasks_cost = sqlQuery('SELECT Fonction.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN Fonction ON Employe.NOM_FONCTION = Fonction.NOM WHERE Tache.PROJET = "' . $_POST["projet"] . '"',$db);
-                foreach($tasks_cost as $task_cost):
-                  $total_cost += intval($task_cost[0]); 
-                endforeach;
-                $end_date = sqlQuery('SELECT DATE(NOW())',$db);
-                sqlQuery('UPDATE Projet SET COUT=' . $total_cost . ', DATE_FIN="' . $end_date[0][0]  .'" WHERE NOM="' . $_POST["projet"] . '"', $db);
+                $total_cost = sqlQuery('SELECT SUM(A) FROM (SELECT F.TAUX_HORAIRE*T.NB_HEURES as A FROM Employe E INNER JOIN Tache T ON T.EMPLOYE = E.NO INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM WHERE T.PROJET = "' . $_POST["projet"]  . '") temp',$db)[0][0];
+                $end_date = sqlQuery('SELECT DATE(NOW())',$db)[0][0];
+                sqlQuery('UPDATE Projet SET COUT=' . $total_cost . ', DATE_FIN="' . $end_date  .'" WHERE NOM="' . $_POST["projet"] . '"', $db);
                 if(isset($_POST["eval?"]) && $_POST["eval?"] == 'yes'):
                   sqlQuery('INSERT INTO Evaluation (PROJET,EXPERT,COMMENTAIRES,AVIS) VALUES ("' . $_POST["projet"]  . '","' . $_POST["expert"] . '","' . $_POST["commentaires"] . '","' . $_POST["avis_expert"] . '")',$db);
                 endif;
@@ -119,7 +115,7 @@
                 endif;
 
                 echo('<br><br><p>Liste des tâches du projet ' . $_POST["projet"] . ' : </p>');
-                $tasks = sqlQuery('SELECT Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, temp.TAUX_HORAIRE, temp.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN (SELECT * FROM Fonction UNION SELECT " " as NOM, 0 as TAUX_HORAIRE) temp ON Employe.NOM_FONCTION = temp.NOM WHERE Tache.PROJET = "' . $_POST["projet"] . '"', $db);
+                $tasks = sqlQuery('SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES FROM Employe E INNER JOIN Tache T ON T.EMPLOYE = E.NO INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM WHERE T.PROJET = "' . $_POST["projet"] . '" ORDER BY E.NO', $db);
                 $columns = array(array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
                 printTable($tasks, $columns);
                 ?>
@@ -150,7 +146,7 @@
                 printTable($project_details, $columns);
 
                 echo('<br><br><p>Liste des tâches du projet ' . $_POST["projet"] . ' : </p>');
-                $tasks = sqlQuery('SELECT Tache.PROJET, Tache.EMPLOYE, Employe.NOM, Tache.NB_HEURES, Employe.NOM_FONCTION, temp.TAUX_HORAIRE, temp.TAUX_HORAIRE*Tache.NB_HEURES FROM Employe INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO INNER JOIN (SELECT * FROM Fonction UNION SELECT " " as NOM, 0 as TAUX_HORAIRE) temp ON Employe.NOM_FONCTION = temp.NOM WHERE Tache.PROJET = "' . $_POST["projet"] . '"', $db);
+                $tasks = sqlQuery('SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES FROM Employe E INNER JOIN Tache T ON T.EMPLOYE = E.NO INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM WHERE T.PROJET = "' . $_POST["projet"] . '" ORDER BY E.NO', $db);
                 $columns = array(array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
                 printTable($tasks, $columns);
 
@@ -202,8 +198,8 @@
                       </form>
                     </div>
                   <?php endif;
-                  $budget_project = sqlQuery('SELECT BUDGET FROM Projet WHERE Projet.NOM="' . $_POST["projet"]  . '"',$db)[0][0];
-                  if($budget_project != NULL):?>
+                  $budget_project = sqlQuery('SELECT ISNULL(BUDGET) FROM (SELECT BUDGET FROM Projet WHERE NOM="' . $_POST["projet"]  . '") temp',$db)[0][0];
+                  if(!$budget_project):?>
                     <div>
                       <p>Formulaire de fin de projet <?php echo($_POST["projet"]);?> : </p>
                       <form action='tasks_management.php' method='POST'>

@@ -1,0 +1,133 @@
+Nous allons maintenant expliciter les requêtes nécessaires au fonctionnement des différents onglets du site web qui permettent de parcourir et d'effectuer des actions sur la base de données :
+\\\\
+Pour l'onglet \href{http://ms8db.montefiore.ulg.ac.be/s191230/search.php}{Tri} une simple requête SELECT est nécessaire pour afficher les éléments de la table. Si on veut par la suite restreindre des attributs de la table à certaines valeurs il suffisait de rajouter un WHERE.
+\begin{verbatim}
+> SELECT * FROM Employe 
+    // Montre toutes les données de tous les employés
+> SELECT * FROM Projet WHERE BUDGET=2000 
+    // Montre toutes les données des projets où le budget vaut 2000
+> SELECT * FROM Fonction WHERE NOM LIKE "%cheur%" 
+    // Montre toutes les fonctions dont le nom contient "cheur"
+\end{verbatim}
+
+Pour l'onglet \href{http://ms8db.montefiore.ulg.ac.be/s191230/tasks_project.php}{Tâche/Projet} il existe seulement deux types de requêtes, une générale affichant toutes les tâches et une autre spécifiant les tâches d'un projet spécifique à afficher. Dans les deux cas on se servait d'INNER JOIN afin d'afficher également la fonction de l'employé réalisant la tâche et le coût de cette tâche.
+
+\begin{verbatim}
+> SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, 
+--> E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES
+--> FROM Employe E 
+--> INNER JOIN Tache T ON T.EMPLOYE = E.NO
+--> INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM
+    // Version générale
+
+> SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, 
+--> E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES
+--> FROM Employe E 
+--> INNER JOIN Tache T ON T.EMPLOYE = E.NO
+--> INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM
+--> WHERE T.PROJET = "STOCH"
+    // Version précise sur le projet "STOCH"
+\end{verbatim}
+
+Pour l'onglet \href{http://ms8db.montefiore.ulg.ac.be/s191230/add.php}{Ajout} on se sert simplement des commandes INSERT INTO et UPDATE pour ajouter ou mettre à jour des éléments dans les tables de la base de données. Les réglages de la base de données nous permettent de ne pas devoir nous soucier si certains champs peuvent être nuls ou non.
+
+\begin{verbatim}
+> INSERT INTO Fonction (NOM,TAUX_HORAIRE) VALUES ("Assistant developpeur","40")
+    // Ajout d'un élément dans la table Fonction
+
+> UPDATE Employe SET NOM_DEPARTEMENT="INF", NOM_FONCTION="Chercheur" WHERE NO=8845
+    // Met à jour les attributs de l'employé possédant le numéro d'employé 8845
+\end{verbatim}
+
+Pour l'onglet \href{http://ms8db.montefiore.ulg.ac.be/s191230/add.php}{Tâches} on affiche simplement les détails du projet (en utilisant une fonction permettant de mettre un code couleur au coût) et on affiche les tâches relatives au projet. Pour ce qui est de la soumission d'heures, la création de tâches, l'écriture de rapport et la mise à terme du projet on doit d'abord vérifier des valeurs dans notre base de données :
+\begin{itemize}
+  \item Modification d'une évaluation (projet terminé) : il faut d'abord vérifier que le projet choisit est terminé et qu'il dispose d'une évaluation.
+  \item Soumission d'heures : il faut d'abord vérifier qu'il existe des tâches sans rapport (non terminées) pour le projet choisit.
+  \item Création de tâches : il faut d'abord vérifier qu'il existe des employés ayant une fonction et un département qui ne travaillent pas sur le projet actuel.
+  \item L'écriture de rapport : il faut d'abord vérifier qu'il existe des tâches sans rapport (non terminées) où les heures de travail sont déterminées pour le projet choisit.
+  \item Fin du projet et création d'évaluation : il faut d'abord vérifier que le projet ne dispose pas de date de fin.
+\end{itemize}
+
+\begin{verbatim}
+> SELECT * FROM Projet P WHERE P.NOM = "STOCH"
+    // Affichage des détails du projet
+
+> SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, 
+--> E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES
+--> FROM Employe E 
+--> INNER JOIN Tache T ON T.EMPLOYE = E.NO
+--> INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM
+--> WHERE T.PROJET = "STOCH"
+    // Affichage des détails des tâches du "STOCH"
+
+// Modification de l'évaluation d'un expert :
+> SELECT EXISTS(SELECT * FROM Evaluation E WHERE E.PROJET="DIDACT")
+    // Recherche une évalution pour le projet "DIDACT"
+
+> UPDATE Evaluation SET AVIS="ECHEC",COMMENTAIRES="NEW_COMMENT" WHERE PROJET="DIDACT"
+    // Met à jour l'évaluation du projet "DIDACT"
+
+// Soumission des heures :
+> SELECT T.EMPLOYE 
+--> FROM Tache T 
+--> WHERE T.EMPLOYE NOT IN 
+-->   (SELECT A.EMPLOYE 
+-->     FROM Tache A INNER JOIN Rapport R ON (A.EMPLOYE = R.EMPLOYE) 
+-->     WHERE A.PROJET="STOCH" AND R.PROJET="STOCH")
+--> AND T.PROJET="STOCH"
+    // Recherche des employés de tâches non terminées (sans rapport) du projet "STOCH"
+
+> UPDATE Tache SET NB_HEURES=10 WHERE EMPLOYE=8829 AND PROJET="STOCH"
+    // Ajout de 10 heures à la tâche de l'employé 8829 du projet "STOCH" (heures précédentes = 0)
+
+// Création de tâches :
+> SELECT NO 
+--> FROM Employe E 
+--> WHERE E.NO NOT IN 
+-->   (SELECT EMPLOYE FROM Tache T WHERE T.PROJET="STOCH") 
+--> AND (E.NOM_DEPARTEMENT IS NOT NULL OR E.NOM_FONCTION IS NOT NULL)
+    // Employés sans tâche dans le projet "STOCH" ayant une fonction et un département
+> INSERT INTO Tache (EMPLOYE, PROJET, NB_HEURES) VALUES (7777,"STOCH",10)
+    // Création d'une tâche de 10 heures pour l'employé 7777 dans le projet "STOCH"
+
+// Écriture d'un rapport :
+> SELECT T.EMPLOYE 
+--> FROM Tache T 
+--> WHERE T.EMPLOYE NOT IN 
+-->   (SELECT A.EMPLOYE FROM Tache A 
+-->     INNER JOIN Rapport R ON (A.EMPLOYE = R.EMPLOYE) 
+-->   WHERE A.PROJET="STOCH" AND R.PROJET="STOCH")
+--> AND T.PROJET="STOCH" AND T.NB_HEURES IS NOT NULL
+    // Recherche des employés des tâches du projet "STOCH" sans rapport et avec heures fixées
+
+> INSERT INTO Rapport (EMPLOYE,PROJET,TITRE) VALUES (8829,"STOCH","TITRE_RAPPORT")
+    // Ajout d'un rapport pour la tâche de l'employé 8829 du projet "STOCH"
+
+> INSERT INTO Mots_Cles (RAPPORT,MOT_CLE) VALUES ("TITRE_RAPPORT","KEYWORD_1")
+> INSERT INTO Mots_Cles (RAPPORT,MOT_CLE) VALUES ("TITRE_RAPPORT","KEYWORD_2")
+    // Ajout des mots clés du rapport créé ci-dessus (2 mots clés)
+
+// Fin de projet et évaluation éventuelle :
+> SELECT ISNULL(BUDGET) FROM (SELECT BUDGET FROM Projet WHERE NOM="STOCH") temp
+    // Recherche si le budget du projet "STOCH" est NULL
+
+> SELECT SUM(A) FROM 
+--> (SELECT F.TAUX_HORAIRE*T.NB_HEURES as A 
+-->  FROM Employe E 
+-->    INNER JOIN Tache T ON T.EMPLOYE = E.NO 
+-->    INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM 
+-->  WHERE T.PROJET = "STOCH") temp
+    // Calcul du coût total des tâches du projet "STOCH"
+
+> SELECT DATE(NOW())
+    // Récupération de la date de fin de projet
+
+> UPDATE Projet SET COUT=780, DATE_FIN="2022-05-06" WHERE NOM="STOCH"
+    // Mise à jour du coût et de la date de fin du projet "STOCH"
+
+> INSERT INTO Evaluation (PROJET,EXPERT,COMMENTAIRES,AVIS) 
+--> VALUES ("STOCH","8845","Retravailler le code","SUCCES")
+    // Création d'une évaluation de l'expert 8845 pour le projet "STOCH" 
+    // ayant l'avis "SUCCES" et les commentaires "Retravailler le code"
+\end{verbatim}
+

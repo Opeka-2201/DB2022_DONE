@@ -144,7 +144,13 @@
                 endif;
               
               elseif(isset($_POST["edit_projet"]) && isset($_POST["table"]) && $_POST["edited_projet"] != 'NULL'):
-                if($_POST["budget_projet"] != NULL):
+                if(intval($_POST["budget_projet"]) < 0):
+                ?>
+                  <div class="error-message" role="alert">
+                    <p>Merci de fournir un budget entier positif</p>
+                  </div>
+                <?php
+                elseif($_POST["budget_projet"] != NULL):
                   sqlQuery("UPDATE Projet SET BUDGET=" . $_POST["budget_projet"]  . " WHERE NOM='" . $_POST["edited_projet"] . "'",$db);
                 else:
                   sqlQuery("UPDATE Projet SET BUDGET=NULL WHERE NOM='" . $_POST["edited_projet"] . "'",$db);
