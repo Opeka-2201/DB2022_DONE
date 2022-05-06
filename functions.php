@@ -18,7 +18,9 @@
 </style>
 
 <?php
+// Différentes fonctions nécessaires au bon fonctionnement du site
 
+// Fonction permettant d'afficher les tables
 function printTable($tuples, $columns){
     echo("<table>");
     echo("<tr>");
@@ -36,6 +38,7 @@ function printTable($tuples, $columns){
     echo("</table>");
 }
 
+// Fonction affichant la table des projets avec un code couleur pour le cout dans le cas de l'onglet Taches
 function printTableCost($tuples, $columns){
   echo("<table>");
   echo("<tr>");
@@ -63,7 +66,7 @@ function printTableCost($tuples, $columns){
   echo("</table>");
 }
 
-
+// Fonction simplifiant les requêtes en MySQL
 function sqlQuery($query, $db){
   try {
     if($db->inTransaction()):
@@ -81,6 +84,7 @@ function sqlQuery($query, $db){
   }
 }
 
+// Fonction permettant le filtrage de data dans l'onglet Tri
 function filterData($args_get,$db){
     $query = 'SELECT * FROM ' . $args_get["table"] . ' WHERE '; 
     foreach($args_get as $arg_name => $arg):

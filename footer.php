@@ -1,4 +1,5 @@
 <!-- © Group25 - Bases de Données 2022 : Projet 2-->
+<!-- Footer réalisé avec bootstrap -->
 
 <div class="containerb">
   <footer class="footer mt-auto py-3 bg-light">

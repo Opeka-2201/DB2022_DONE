@@ -11,8 +11,10 @@
 
     <body>
       <?php
+      // Début session pour vérifier connexion
       session_start();
       if(isset($_SESSION['user'])):
+        // si connecté entre sur le site
         require __DIR__ . '/functions.php';
         include("header.php");
         include("PDO.php");
@@ -273,6 +275,7 @@
         </div>
       <?php
       else:
+        // si non connecté est renvoyé vers login.php
         header("Location:login.php");
       endif;
       ?>

@@ -1,6 +1,7 @@
 <!-- © Group25 - Bases de Données 2022 : Projet 2-->
 
 <?php
+  // Script permettant de se connecter à la base de données en PDO
   try
   {
     $host = 'localhost';

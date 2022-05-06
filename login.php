@@ -3,10 +3,14 @@
 <!DOCTYPE html>
 
 <?php 
+  // Début session pour vérifier connexion
   session_start();
   $message = "";
+
+  // Comparaison des identifiants fournis et des identifiants réels du site
   if(isset($_POST['username']) && isset($_POST['pwd'])):
     if($_POST['username']=='group25' && $_POST['pwd']=='3uCTA8L2ID'):
+      // Set des variables de session si identifiants corrects
       $_SESSION['user'] = 'group25';
       $_SESSION['pwd'] = '3uCTA8L2ID';
     else:
@@ -14,8 +18,10 @@
     endif;
   endif;
   if(isset($_SESSION['user'])):
+    // si connecté entre sur le site
     header("Location:home.php");
   endif;
+  // si non connecté reste sur login.php
 ?>
 
 <html>

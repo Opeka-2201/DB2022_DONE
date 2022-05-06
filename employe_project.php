@@ -12,8 +12,10 @@
 
   <body>
     <?php
+      // Début session pour vérifier connexion
       session_start();
       if(isset($_SESSION['user'])):
+        // si connecté entre sur le site
         require __DIR__ . '/functions.php';
         include("header.php");
         include("PDO.php");
@@ -30,7 +32,8 @@
           $columns->append(array($project[0]));
         endforeach;
         $roles_query = $roles_query . " FROM Employe E) temp";
-
+        // Au dessus génère le tableau en mode full (sans restriction sur la participation des employés à tous les projets)
+        // En dessous spécification du tableau en mode full ou restreint
         if(isset($_POST["mode"]) && $_POST["mode"] == 'full'):
         ?>
           <br>
@@ -71,6 +74,7 @@
         </div>
     <?php
       else:
+        // si non connecté est renvoyé vers login.php
         header("Location:login.php");
       endif;
     ?>

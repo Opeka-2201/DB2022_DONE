@@ -1,4 +1,5 @@
 -- © Group25 - Bases de Données 2022 : Projet 2
+-- Script nécessaire à la génération des tables en MySQL
 
 DROP DATABASE IF EXISTS group25;
 

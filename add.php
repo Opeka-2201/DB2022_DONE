@@ -12,8 +12,10 @@
 
   <body>
     <?php
+      // Début session pour vérifier connexion
       session_start();
       if(isset($_SESSION['user'])):
+        // si connecté entre sur le site
         require __DIR__ . '/functions.php';
         include('header.php');
         include("PDO.php");
@@ -45,6 +47,7 @@
           
               <?php
                 foreach($columns as $column):
+                  // Affichage spécial du formulaire d'ajout pour certaines catégories d'attributs étant limités à certaines valeurs précises
                   if($_POST["table"] == "Projet" && $column[0] == 'CHEF'):
                     $chefs = sqlQuery('SELECT NOM FROM Employe WHERE NOM_DEPARTEMENT != "NULL" AND NOM_FONCTION != "NULL"',$db);
                     echo("CHEF ");
@@ -133,6 +136,7 @@
                 sqlQuery($query, $db);
               
               elseif(isset($_POST["edit_employe"]) && isset($_POST["table"])):
+                // Modfication des attributs d'un employé
                 if($_POST["departement"]=='NULL' && $_POST["fonction"]=='NULL'):
                   sqlQuery("UPDATE Employe SET NOM_DEPARTEMENT=NULL, NOM_FONCTION=NULL WHERE NO=" . $_POST["employe_id"],$db);
                 elseif($_POST["departement"]=='NULL'):
@@ -144,6 +148,7 @@
                 endif;
               
               elseif(isset($_POST["edit_projet"]) && isset($_POST["table"]) && $_POST["edited_projet"] != 'NULL'):
+                // Modification du budget d'un projet
                 if(intval($_POST["budget_projet"]) < 0):
                 ?>
                   <div class="error-message" role="alert">
@@ -233,6 +238,7 @@
         </div>
     <?php
       else:
+        // si non connecté est renvoyé vers login.php
         header("Location:login.php");
       endif;
     ?>

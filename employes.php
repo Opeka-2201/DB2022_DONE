@@ -12,8 +12,10 @@
 
   <body>
     <?php
+      // Début session pour vérifier connexion
       session_start();
       if(isset($_SESSION['user'])):
+        // si connecté entre sur le site
         require __DIR__ . '/functions.php';
         include("header.php");
         include("PDO.php");
@@ -44,7 +46,7 @@
           <p>Tableau de bord des employés :</p>
         <?php
           $tb_columns = array(array("NO"),array("NOM"),array("NB_PROJETS"),array("NB_HEURES"));
-
+          // Génération du tableau pour la bonne colonne et le bon sens de tri
           if(isset($_POST['column']) AND isset($_POST['direction'])):
             $tb_employe = sqlQuery('SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY ' . $_POST['column']  . ' '  . $_POST['direction'] . ')temp',$db);
           elseif(isset($_POST['column'])):
@@ -53,7 +55,8 @@
             $tb_employe = sqlQuery('SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC) temp',$db);
           endif;
           printTable($tb_employe,$tb_columns);
-
+          
+          // Création du data pour le tableau de bord des employés
           echo("SELECT 'NB_PROJETS' as 'DATA', SUM(temp1.NB_PROJETS) as 'SOMME', AVG(temp1.NB_PROJETS) as 'MOYENNE', VARIANCE(temp1.NB_PROJETS) as 'VARIANCE', MIN(temp1.NB_PROJETS) as 'MINIMUM', MAX(temp1.NB_PROJETS) as 'MAXIMUM' FROM (SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC) temp) temp1 UNION SELECT 'NB_HEURES' as 'DATA', SUM(temp2.NB_HEURES) as 'SOMME', AVG(temp2.NB_HEURES) as 'MOYENNE', VARIANCE(temp2.NB_HEURES) as 'VARIANCE', MIN(temp2.NB_HEURES) as 'MINIMUM', MAX(temp2.NB_HEURES) as 'MAXIMUM' FROM (SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC) temp) temp2");
           $data_employe = sqlQuery("SELECT 'NB_PROJETS' as 'DATA', SUM(temp1.NB_PROJETS) as 'SOMME', AVG(temp1.NB_PROJETS) as 'MOYENNE', VARIANCE(temp1.NB_PROJETS) as 'VARIANCE', MIN(temp1.NB_PROJETS) as 'MINIMUM', MAX(temp1.NB_PROJETS) as 'MAXIMUM' FROM (SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC) temp) temp1 UNION SELECT 'NB_HEURES' as 'DATA', SUM(temp2.NB_HEURES) as 'SOMME', AVG(temp2.NB_HEURES) as 'MOYENNE', VARIANCE(temp2.NB_HEURES) as 'VARIANCE', MIN(temp2.NB_HEURES) as 'MINIMUM', MAX(temp2.NB_HEURES) as 'MAXIMUM' FROM (SELECT temp.NO as NO, temp.NOM as NOM, COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, COALESCE(temp.NB_HEURES,0) as NB_HEURES FROM (SELECT E.NO AS NO, E.NOM AS NOM, COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE GROUP BY E.NO ORDER BY E.NO ASC) temp) temp2",$db);
           $data_columns = array(array(" "),array("SOMME"),array("MOYENNE"),array("VARIANCE"),array("MINIMUM"),array("MAXIMUM"));
@@ -67,6 +70,7 @@
         </div>
     <?php
       else:
+        // si non connecté est renvoyé vers login.php
         header("Location:login.php");
       endif;
     ?>

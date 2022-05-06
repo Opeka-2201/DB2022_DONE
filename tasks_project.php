@@ -12,8 +12,10 @@
 
   <body>
     <?php
+      // Début session pour vérifier connexion
       session_start();
       if(isset($_SESSION['user'])):
+        // si connecté entre sur le site
         require __DIR__ . '/functions.php';
         include("header.php");
         include("PDO.php");
@@ -39,7 +41,8 @@
 
 
       <div class="justify-content-center">
-        <?php 
+        <?php
+          // Génération du tableau regroupant les tâches du projet sélectionné
           if(isset($_POST["projet"]) && ($_POST["projet"] != "NULL")):
           ?>
             <p>Tâches relatives au projet <?php echo($_POST["projet"]);?> :</p>
@@ -47,7 +50,6 @@
             $tasks = sqlQuery('SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES FROM Employe E INNER JOIN Tache T ON T.EMPLOYE = E.NO INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM WHERE T.PROJET = "' . $_POST["projet"] . '"', $db);
             $columns = array(array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
             printTable($tasks, $columns);
-
           else:
             $tasks = sqlQuery('SELECT T.PROJET, T.EMPLOYE, E.NOM, T.NB_HEURES, E.NOM_FONCTION, F.TAUX_HORAIRE, F.TAUX_HORAIRE*T.NB_HEURES FROM Employe E INNER JOIN Tache T ON T.EMPLOYE = E.NO INNER JOIN Fonction F ON E.NOM_FONCTION = F.NOM', $db);
             $columns = array(array("PROJET"),array("EMPLOYE"),array("NOM"),array("NB_HEURES"),array("NOM_FONCTION"),array("TAUX_HORAIRE"),array("COUT"));
@@ -58,6 +60,7 @@
     </div>
     <?php
       else:
+        // si non connecté est renvoyé vers login.php
         header("Location:login.php");
       endif;
     ?>
