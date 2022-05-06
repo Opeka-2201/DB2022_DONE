@@ -131,3 +131,56 @@ Pour l'onglet \href{http://ms8db.montefiore.ulg.ac.be/s191230/add.php}{Tâches} 
     // ayant l'avis "SUCCES" et les commentaires "Retravailler le code"
 \end{verbatim}
 
+Pour l'onglet \href{http://ms8db.montefiore.ulg.ac.be/s191230/employe_project.php}{Employé/Projet} on effectue une simple requête SQL permettant de rechercher les employés ayant des rôles dans tous les projets.
+\begin{verbatim}
+> SELECT * 
+--> FROM (SELECT E.NO, E.NOM, E.NOM_FONCTION, CONCAT(
+--> IF(E.NO IN (SELECT P.CHEF FROM Projet P WHERE P.NOM = "MED-STAT"), "CHEF ",""),
+--> IF(E.NO IN (SELECT E.EXPERT FROM Evaluation E WHERE E.PROJET = "MED-STAT"),"EXPERT ",""),
+--> IF(E.NO IN (SELECT R.EMPLOYE FROM Rapport R WHERE R.PROJET = "MED-STAT"),"EMPLOYE_RAPPORT ",""),
+--> IF(E.NO IN (SELECT T.EMPLOYE FROM Tache T WHERE T.PROJET = "MED-STAT"),"EMPLOYE_TACHE ",""))
+--> as "MED-STAT", ...)
+--> temp WHERE "MED-STAT" != " " AND ...
+    // Les ... indiquent une répétition de la requête pour les autres projets
+\end{verbatim}
+
+Pour l'onglet \href{http://ms8db.montefiore.ulg.ac.be/s191230/projects.php}{Projets} on effectue une simple requête SQL permettant d'afficher les détails d'un projet, son statut et son coût actuel si le projet n'est pas terminé.
+\begin{verbatim}
+> SELECT P.NOM,P.DEPARTEMENT,P.CHEF,
+--> IF(P.DATE_FIN IS NOT NULL,"TERMINÉ",
+-->   IF(P.BUDGET IS NULL,"EN ATTENTE","EN COURS DE ROUTE")) as STATUT,
+--> P.BUDGET,C.COUT,H.NB_HEURES,P.DATE_DEBUT,P.DATE_FIN 
+--> FROM Projet P,
+-->      (SELECT P.NOM as NOM, SUM(T.NB_HEURES) as NB_HEURES 
+-->       FROM Tache T 
+-->       INNER JOIN Projet P ON P.NOM = T.PROJET GROUP BY P.NOM) H,
+-->      (SELECT temp.P_C as PC,SUM(temp.COUT_C) as COUT 
+-->       FROM 
+-->         (SELECT Tache.PROJET as P_C, Tache.NB_HEURES*Fonction.TAUX_HORAIRE as COUT_C 
+-->          FROM Employe 
+-->          INNER JOIN Tache ON Tache.EMPLOYE = Employe.NO 
+-->          INNER JOIN Fonction ON Fonction.NOM = Employe.NOM_FONCTION) temp 
+-->       GROUP BY temp.P_C) C 
+--> WHERE H.NOM = P.NOM AND C.PC = P.NOM ORDER BY DATE_DEBUT ASC, NOM ASC
+\end{verbatim}
+
+Pour l'onglet \href{http://ms8db.montefiore.ulg.ac.be/s191230/employes.php}{Employés} il suffit pour le tableau de bord des employés de réaliser une requête en fonction de la colonne et de la direction de tri. Pour ce qui est du data il faut réaliser une requête plus longue utilisant des fonctions comme SUM, AVERAGE, ... et des GROUP BY.
+
+\begin{verbatim}
+> SELECT temp.NO as NO, temp.NOM as NOM, 
+--> COALESCE(temp.NB_PROJETS,0) as NB_PROJETS, 
+--> COALESCE(temp.NB_HEURES,0) as NB_HEURES 
+--> FROM (SELECT E.NO AS NO, E.NOM AS NOM, 
+-->       COUNT(T.PROJET) AS NB_PROJETS, SUM(T.NB_HEURES) AS NB_HEURES 
+-->       FROM Employe E LEFT JOIN Tache T ON E.NO = T.EMPLOYE 
+-->       GROUP BY E.NO ORDER BY NB_PROJETS DESC) temp
+    // Affichage des détails pour chaque employé pour les projets et heures prestées
+
+> SELECT "NB_PROJETS" as "DATA", SUM(temp.NB_PROJETS) as "SOMME", ...
+--> FROM TABLE_temp_CI_DESSUS
+--> UNION 
+--> SELECT "NB_HEURES" as "DATA", SUM(temp.NB_HEURES) as "SOMME", ... 
+--> FROM TABLE_temp_CI_DESSUS
+    // Les ... indiquent qu'il faut réaliser cela pour les 
+    // différentes fonctions AVERAGE, MINIMUM, ...
+\end{verbatim}
