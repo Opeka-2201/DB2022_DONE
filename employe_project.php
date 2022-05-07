@@ -55,7 +55,6 @@
           endforeach;
           $roles_query = $roles_query . "1";
         endif;
-        echo($roles_query);
         $roles_table = sqlQuery($roles_query,$db);
     ?>
         <div class="px-4 py-5 my-5">
