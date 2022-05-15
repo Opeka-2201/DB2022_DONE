@@ -223,7 +223,6 @@
                         <br><br>
                         <?php echo("Avis expert : "); ?>
                         <select name='avis_expert'>
-                          <option value=NULL>---</option>
                           <option value='SUCCES'>SUCCES</option>
                           <option value='ECHEC'>ECHEC</option>
                         </select>

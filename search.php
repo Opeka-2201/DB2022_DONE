@@ -31,7 +31,7 @@
                       $tables = sqlQuery('SHOW TABLES',$db);
                       foreach ($tables as $table) : 
                   ?>
-                      <option name ="table" value="<?php echo($table["Tables_in_group25"])?>"><?php echo($table["Tables_in_group25"])?></option>
+                      <option name="table" value="<?php echo($table["Tables_in_group25"])?>"><?php echo($table["Tables_in_group25"])?></option>
                   <?php endforeach;?>
               </select>
             <button type="submit">Accéder</button>
